@@ -208,9 +208,6 @@ body {
 }
 
 .about__wrap {
-  /*max-width: 1100px;
-  margin: 0 auto;*/
-
   display: grid;
   grid-template-columns: 1fr 1.3fr; /* photo un peu plus petite que le texte */
   gap: clamp(24px, 4vw, 64px);
@@ -253,6 +250,11 @@ body {
 }
 
 /* Texte à droite */
+.about__content {
+  display: flex;
+  flex-direction: column;
+}
+
 .about__text {
   margin: 0 0 14px 0;
   color: var(--text-color);
@@ -262,6 +264,29 @@ body {
   text-align: justify;
   text-justify: inter-word;
   hyphens: auto;
+}
+
+/* ===== Instagram ===== */
+.about__instagram {
+  margin-top: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--title-color);
+  text-decoration: none;
+  transition: transform 160ms ease, opacity 160ms ease;
+}
+
+.about__instagram svg {
+  width: 28px;
+  height: 28px;
+  fill: currentColor;
+}
+
+.about__instagram:hover {
+  transform: translateY(-2px);
+  opacity: 0.8;
 }
 
 /* ====== Mobile ====== */
@@ -315,6 +340,10 @@ body {
 
   .about__line2 {
     padding-left: 0;
+  }
+
+  .about__instagram {
+    margin-top: 28px;
   }
 }
 
