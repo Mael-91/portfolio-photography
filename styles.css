@@ -1,0 +1,143 @@
+/* ====== Réglages rapides (à personnaliser) ====== */
+:root {
+  /* Couleurs (mets tes codes ici) */
+  --title-color: #14110D;   /* titre */
+  --text-color:  #1F1A14;   /* paragraphe */
+  --btn-bg:      #C2A875;   /* fond bouton */
+  --btn-text:    #14110D;   /* texte bouton */
+
+  /* Overlay (améliore la lisibilité sans "ombre" sur le texte) */
+  --overlay-top: 0.10;      /* 0.00 à 0.30 */
+  --overlay-mid: 0.10;
+  --overlay-bot: 0.25;
+
+  /* Image */
+  --hero-image: url("./assets/hero.jpg");
+}
+
+/* ====== Base ====== */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--text-color);
+  background: #fff;
+}
+
+/* ====== Hero ====== */
+.hero {
+  min-height: 100svh; /* mobile safe viewport */
+  display: grid;
+  place-items: center;
+  padding: clamp(24px, 4vw, 64px);
+  position: relative;
+  isolation: isolate;
+
+  background-image: var(--hero-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Overlay pour lisibilité (pas une ombre sur le texte) */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+
+  /* léger voile + dégradé */
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, var(--overlay-top)) 0%,
+      rgba(0, 0, 0, var(--overlay-mid)) 45%,
+      rgba(0, 0, 0, var(--overlay-bot)) 100%
+    );
+}
+
+/* Contenu centré comme ton exemple */
+.hero__content {
+  text-align: center;
+  max-width: 900px;
+  padding: clamp(10px, 2vw, 18px);
+}
+
+/* Titre responsive + style "affiche" */
+.hero__title {
+  margin: 0 0 16px 0;
+  color: var(--title-color);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  /* clamp() = responsive auto */
+  font-size: clamp(34px, 5vw, 64px);
+  line-height: 1.05;
+}
+
+/* Sous-titre (lisibilité ++ : largeur + taille + interligne) */
+.hero__subtitle {
+  margin: 0 auto 24px auto;
+  max-width: 52ch;
+
+  color: var(--text-color);
+  font-size: clamp(14px, 1.6vw, 18px);
+  line-height: 1.55;
+
+  /* petit + contrasté sur image */
+  text-wrap: balance;
+}
+
+/* Bouton */
+.hero__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 12px 22px;
+  border-radius: 999px;
+  text-decoration: none;
+
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 13px;
+
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  transition: transform 160ms ease, filter 160ms ease;
+}
+
+.hero__btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(0.97);
+}
+
+.hero__btn:active {
+  transform: translateY(0px);
+}
+
+/* Accessibilité focus clavier */
+.hero__btn:focus-visible {
+  outline: 3px solid rgba(194, 168, 117, 0.55);
+  outline-offset: 4px;
+}
+
+/* ====== Section suivante (exemple) ====== */
+.section {
+  padding: 64px clamp(24px, 4vw, 80px);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.section h2 {
+  margin: 0 0 12px 0;
+}
+
+/* ====== Ajustements mobile ====== */
+@media (max-width: 480px) {
+  .hero__subtitle { max-width: 34ch; }
+}
