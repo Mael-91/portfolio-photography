@@ -147,7 +147,7 @@ body {
   left: 50%;
   transform: translateX(-50%);
 
-  bottom: clamp(48px, 8vh, 96px); /* distance du bas de l'écran */
+  bottom: calc(clamp(48px, 8vh, 96px) + clamp(60px, 8vw, 120px));
 
   z-index: 10;
 }
