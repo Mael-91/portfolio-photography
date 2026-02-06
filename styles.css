@@ -262,7 +262,7 @@ body {
 
 /* ====== Mobile ====== */
 /* Responsive : sur mobile, photo au-dessus puis texte */
-@media (max-width: 860px) {
+/*@media (max-width: 860px) {
   .about__wrap {
     grid-template-columns: 1fr;
   }
@@ -278,7 +278,7 @@ body {
   .about__line2 {
     padding-left: 3ch; /* garde l’effet même sur mobile */
   }
-}
+}*/
 
 @media (max-width: 767px) {
   .hero__title {
@@ -314,6 +314,7 @@ body {
   }
 
   .about__photo {
+    box-shadow: none;
     width: min(320px, 100%);
   }
 
@@ -375,11 +376,8 @@ body {
   }
 
   .about__photo {
-    box-shadow: none;
     width: min(280px, 90%);
-    aspect-ratio: 4 / 5;
-    min-height: 300px; /* IMPORTANT: garantit la visibilité */
-    display: block;
+    min-height: 300px;
   }
 
   .custom-shape-divider-top-1770404141 {
