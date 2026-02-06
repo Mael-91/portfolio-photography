@@ -213,7 +213,7 @@ body {
   line-height: 1.05;
   text-transform: uppercase;
   font-size: clamp(28px, 3.2vw, 44px);
-  text-shadow: 0 10px 18px rgba(15, 15, 15, 0.18);
+  text-shadow: 0 4px 0 rgba(15, 15, 15, 0.25);
 }
 
 /* Décalage de "présente" pour que le P arrive sous le "me"
