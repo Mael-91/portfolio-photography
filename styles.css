@@ -318,12 +318,31 @@ body {
     width: min(320px, 100%);
   }
 
+  .about__subtitle { 
+    text-shadow: none; 
+  }
+
   .about__subtitle br {
     display: none;
   }
 
   .about__line2 {
     padding-left: 0;
+  }
+}
+
+@media (max-width: 549px) {
+  .about {
+    padding-top: 64px;
+    padding-bottom: 64px;
+  }
+
+  .about__photo {
+    width: min(260px, 90%);
+  }
+
+  .about__text {
+    font-size: 15px;
   }
 }
 
