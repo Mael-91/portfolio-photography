@@ -276,5 +276,15 @@ body {
 
   .about__subtitle {
     margin-bottom: 32px;
+    text-align: center;
+    letter-spacing: 0.06em;
+  }
+
+  .about__subtitle br {
+    display: none; /* supprime le retour à la ligne */
+  }
+
+  .about__line2 {
+    padding-left: 0; /* enlève le décalage */
   }
 }
