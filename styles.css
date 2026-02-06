@@ -37,9 +37,14 @@ body {
 /* ====== Hero / Landing ====== */
 .hero {
   min-height: 100svh;
-  display: grid;
-  place-items: center;
-  padding: clamp(24px, 4vw, 64px);
+  display: flex;
+  align-items: flex-start; /* contenu en haut */
+  justify-content: center;
+
+  padding-top: clamp(80px, 12vh, 160px);
+  padding-left: clamp(24px, 4vw, 64px);
+  padding-right: clamp(24px, 4vw, 64px);
+
   position: relative;
   isolation: isolate;
 
@@ -68,12 +73,11 @@ body {
 .hero__content {
   text-align: center;
   max-width: 900px;
-  padding: clamp(12px, 2vw, 20px);
 }
 
 /* ====== Titre ====== */
 .hero__title {
-  margin: 0 0 16px 0;
+  margin-bottom: 20px;
   color: var(--title-color);
   font-weight: 700;
   text-transform: uppercase;
@@ -85,7 +89,8 @@ body {
 
 /* ====== Paragraphe ====== */
 .hero__subtitle {
-  margin: 0 auto 28px auto;
+  margin-top: 8px;
+  margin-bottom: 32px;
   max-width: 52ch;
 
   color: var(--text-color);
@@ -103,6 +108,7 @@ body {
 
   padding: 12px 24px;
   border-radius: 999px;
+  margin-top: 8px;
 
   background-color: var(--btn-bg);
   color: var(--btn-text);
@@ -147,5 +153,15 @@ body {
 @media (max-width: 480px) {
   .hero__subtitle {
     max-width: 34ch;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding-top: clamp(64px, 14vh, 120px);
+  }
+
+  .hero__subtitle {
+    margin-bottom: 24px;
   }
 }
