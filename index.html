@@ -152,15 +152,34 @@
       <small>© <span id="year"></span> Mael Constantin — Photographe automobile</small>
     </footer>
 
-    <script>
-      // Petit confort, pas SEO mais propre
-      document.getElementById("year").textContent = new Date().getFullYear();
-    </script>
-
     <button class="back-to-top" aria-label="Revenir en haut de la page" title="Revenir en haut">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M6 14l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
+
+    <script>
+      // Petit confort, pas SEO mais propre
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+
+    <script>
+      const backToTopBtn = document.querySelector('.back-to-top');
+
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > window.innerHeight * 0.6) {
+          backToTopBtn.classList.add('is-visible');
+        } else {
+          backToTopBtn.classList.remove('is-visible');
+        }
+      });
+
+      backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+    </script>
   </body>
 </html>
