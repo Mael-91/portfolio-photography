@@ -39,6 +39,45 @@ body {
 }
 
 /* fléche retour vers le haut */
+.back-to-top {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+
+  background-color: var(--btn-bg);
+  color: var(--btn-text);
+
+  border: none;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+
+  transition: opacity 200ms ease, transform 200ms ease;
+  z-index: 100;
+}
+
+.back-to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  background-color: var(--btn-bg-hover);
+  transform: translateY(-2px);
+}
+
+
 .back-to-top svg {
   width: 22px;
   height: 22px;
@@ -334,6 +373,11 @@ body {
 /* Responsive : sur mobile, photo au-dessus puis texte */
 
 @media (max-width: 767px) {
+  .back-to-top {
+    bottom: 24px;
+    right: 24px;
+  }
+  
   .hero__title {
     margin-bottom: 28px;
   }
