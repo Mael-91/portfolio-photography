@@ -149,7 +149,7 @@ body {
 
   bottom: clamp(48px, 8vh, 96px); /* distance du bas de l'écran */
 
-  z-index: 2;
+  z-index: 10;
 }
 
 /* Fix spécifique quand le bouton est en mode "plus bas" (absolute centré) */
@@ -171,7 +171,7 @@ body {
     overflow: hidden;
     line-height: 0;
     pointer-events: none;
-    z-index: 5;
+    z-index: 2;
 }
 
 .custom-shape-divider-top-1770404141 svg {
