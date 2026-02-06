@@ -73,6 +73,10 @@ body {
 .hero__content {
   text-align: center;
   max-width: 900px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* clé du centrage vertical */
 }
 
 /* ====== Titre ====== */
