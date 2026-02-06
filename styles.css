@@ -147,7 +147,7 @@ body {
   left: 50%;
   transform: translateX(-50%);
 
-  bottom: calc(clamp(48px, 8vh, 96px) + clamp(60px, 8vw, 120px));
+  bottom: clamp(48px, 8vh, 96px); /* distance du bas de l'écran */
 
   z-index: 10;
 }
@@ -164,24 +164,24 @@ body {
 
 /* Wave divider */
 .custom-shape-divider-top-1770404141 {
-    position: absolute;
-    bottom: -1px; /* colle la wave au bas du header */
-    left: 0;
-    width: 100%;
-    overflow: hidden;
-    line-height: 0;
-    pointer-events: none;
-    z-index: 2;
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  pointer-events: none;
+  z-index: 2;
 }
 
 .custom-shape-divider-top-1770404141 svg {
-    display: block;
-    width: calc(100% + 1.3px);
-    height: clamp(60px, 8vw, 120px); /* responsive */
+  display: block;
+  width: calc(100% + 1.3px);
+  height: clamp(60px, 8vw, 120px);
 }
 
 .custom-shape-divider-top-1770404141 .shape-fill {
-    fill: #ffffff; /* fond blanc de la section About */
+  fill: #ffffff;
 }
 
 /* ====== Sections ====== */
