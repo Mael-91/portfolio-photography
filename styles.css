@@ -280,7 +280,7 @@ body {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 760px) {
   .hero__title {
     margin-bottom: 28px;
   }
@@ -291,6 +291,22 @@ body {
 
   .hero__subtitle {
     margin-bottom: 36px;
+  }
+
+  .about__wrap {
+    grid-template-columns: 1fr;
+  }
+
+  .about__media {
+    justify-content: flex-start;
+  }
+
+  .about__photo {
+    width: min(320px, 100%);
+  }
+
+  .about__line2 {
+    padding-left: 3ch;
   }
 }
 
