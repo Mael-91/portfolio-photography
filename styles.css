@@ -262,23 +262,6 @@ body {
 
 /* ====== Mobile ====== */
 /* Responsive : sur mobile, photo au-dessus puis texte */
-/*@media (max-width: 860px) {
-  .about__wrap {
-    grid-template-columns: 1fr;
-  }
-
-  .about__media {
-    justify-content: flex-start;
-  }
-
-  .about__photo {
-    width: min(320px, 100%);
-  }
-
-  .about__line2 {
-    padding-left: 3ch; /* garde l’effet même sur mobile */
-  }
-}*/
 
 @media (max-width: 767px) {
   .hero__title {
