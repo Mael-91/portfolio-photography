@@ -271,6 +271,9 @@ body {
   margin-top: 28px;
   display: inline-flex;
   align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--title-color);
   justify-content: center;
   text-decoration: none;
 }
@@ -279,11 +282,20 @@ body {
   width: 30px;
   height: 30px;
   display: block;
+
+  transition: transform 320ms ease;
+  transform-origin: center;
 }
 
 .about__instagram:hover svg {
-  transform: translateY(-2px);
-  opacity: 0.9;
+  transform: rotate(12deg);
+}
+
+.about__instagram-name {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
 }
 
 /* ====== Mobile ====== */
@@ -341,6 +353,10 @@ body {
 
   .about__instagram {
     margin-top: 28px;
+  }
+
+  .about__instagram-name {
+    display: none;
   }
 }
 
