@@ -127,17 +127,6 @@ body {
   transition: background-color 160ms ease, transform 160ms ease;
 }
 
-/* ====== Bouton positionné plus bas dans l'écran ====== */
-.hero__btn--fixed {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-
-  bottom: clamp(48px, 8vh, 96px); /* distance du bas de l'écran */
-
-  z-index: 2;
-}
-
 .hero__btn:hover {
   background-color: var(--btn-bg-hover);
   transform: translateY(-1px);
@@ -150,6 +139,27 @@ body {
 .hero__btn:focus-visible {
   outline: 3px solid rgba(194, 168, 117, 0.55);
   outline-offset: 4px;
+}
+
+/* ====== Bouton positionné plus bas dans l'écran ====== */
+.hero__btn--fixed {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  bottom: clamp(48px, 8vh, 96px); /* distance du bas de l'écran */
+
+  z-index: 2;
+}
+
+/* Fix spécifique quand le bouton est en mode "plus bas" (absolute centré) */
+.hero__btn--fixed:hover {
+  background-color: var(--btn-bg-hover);
+  transform: translateX(-50%) translateY(-1px);
+}
+
+.hero__btn--fixed:active {
+  transform: translateX(-50%) translateY(0);
 }
 
 /* ====== Sections ====== */
