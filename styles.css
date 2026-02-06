@@ -178,7 +178,7 @@ body {
 .custom-shape-divider-top-1770404141 svg {
   display: block;
   width: calc(100% + 1.3px);
-  height: clamp(36px, 5w, 72px);
+  height: clamp(36px, 5vw, 72px);
 }
 
 .custom-shape-divider-top-1770404141 .shape-fill {
