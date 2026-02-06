@@ -177,7 +177,8 @@ body {
 /* ====== Mobile ====== */
 @media (max-width: 480px) {
   .hero__subtitle {
-    max-width: 34ch;
+    max-width: 28ch;
+    white-space: normal;
   }
 
   .hero__btn--fixed {
