@@ -38,6 +38,19 @@ body {
   background-color: #ffffff;
 }
 
+/* fléche retour vers le haut */
+.back-to-top svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+/* Petite animation au hover (optionnelle mais élégante) */
+.back-to-top:hover svg {
+  transform: translateY(-2px);
+  transition: transform 160ms ease;
+}
+
 /* ====== Hero / Landing ====== */
 .hero {
   min-height: 100svh;
