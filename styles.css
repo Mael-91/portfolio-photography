@@ -349,4 +349,8 @@ body {
     min-height: 300px; /* IMPORTANT: garantit la visibilité */
     display: block;
   }
+
+  .custom-shape-divider-top-1770404141 {
+    display: none;
+  }
 }
