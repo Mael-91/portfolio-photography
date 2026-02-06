@@ -169,6 +169,10 @@ body {
   .hero__subtitle {
     max-width: 34ch;
   }
+
+  .hero__btn--fixed {
+    bottom: 56px;
+  }
 }
 
 @media (max-width: 768px) {
