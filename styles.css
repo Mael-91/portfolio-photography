@@ -201,7 +201,7 @@ body {
   aspect-ratio: 4 / 5;     /* portrait */
   border-radius: 18px;
   background: #d9d9d9;     /* placeholder gris en attendant ta photo */
-  box-shadow: -16px 16px 0 rgba(15, 15, 15, 0.18);
+  box-shadow: 14px 14px 0 rgba(15, 15, 15, 0.14);
 }
 
 /* Sous-titre "Je me / présente" */
@@ -306,6 +306,7 @@ body {
     margin-bottom: 32px;
     text-align: center;
     letter-spacing: 0.06em;
+    text-shadow: none;
   }
 
   .about__subtitle br {
@@ -314,5 +315,9 @@ body {
 
   .about__line2 {
     padding-left: 0; /* enlève le décalage */
+  }
+
+  .about__photo {
+    box-shadow: none;
   }
 }
