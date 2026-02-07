@@ -1,0 +1,47 @@
+{
+  "sectionTitle": "PRESTATIONS",
+  "intro": "Chaque projet est unique. Les prestations sont définies selon vos besoins, le contexte et l’usage des images.",
+  "fromLabel": "À partir de",
+  "fromPrice": "XXX € / jour",
+  "fromNote": "— sur devis selon le projet, la durée et les droits d’utilisation.",
+  "cards": [
+    {
+      "title": "Base de prestation",
+      "type": "list",
+      "items": [
+        "Prise de vue sur site, événement ou circuit",
+        "Sélection & post-traitement professionnel",
+        "Livraison numérique en haute définition",
+        "Galerie privée pour sélection & téléchargement",
+        "Archivage temporaire des fichiers"
+      ]
+    },
+    {
+      "title": "Options & livrables",
+      "type": "list",
+      "items": [
+        "Livraison numérique uniquement ou impressions (fine art)",
+        "Tirages : formats, supports et finitions sur demande",
+        "Archivage longue durée",
+        "Livraison express",
+        "Images optimisées web / réseaux sociaux (formats dédiés)"
+      ]
+    },
+    {
+      "title": "Droits d’utilisation",
+      "type": "mixed",
+      "text": "Les droits d’utilisation sont définis selon l’usage (éditorial / communication / commercial), la durée et la zone de diffusion. Une cession adaptée est proposée pour chaque projet.",
+      "items": [
+        "Extension de droits (marque, concession, événement)",
+        "Usage commercial / international",
+        "Cession partielle ou totale selon besoin"
+      ]
+    }
+  ],
+  "cta": {
+    "primaryText": "Demander un devis",
+    "primaryHref": "#contact",
+    "secondaryText": "Voir des projets récents sur Instagram",
+    "instagramHref": "https://www.instagram.com/TON_INSTAGRAM/"
+  }
+}
