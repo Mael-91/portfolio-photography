@@ -101,52 +101,76 @@
     </header>
 
     <!-- À PROPOS -->
-  <section id="about" class="about" aria-label="À propos">
-    <div class="about__wrap">
-      <div class="about__media" aria-hidden="true">
-        <div class="about__photo"></div>
+    <section id="about" class="about" aria-label="À propos">
+      <div class="about__wrap">
+        <div class="about__media" aria-hidden="true">
+          <div class="about__photo"></div>
+        </div>
+  
+        <div class="about__content">
+          <h2 class="about__subtitle">
+            <span class="about__line1">Je me</span><br />
+            <span class="about__line2">présente</span>
+          </h2>
+  
+          <p class="about__text">
+            Je suis Mael, photographe automobile freelance. Autodidacte, je construis
+            mon regard depuis 2023 à travers les voyages et les événements automobiles,
+            avec une approche centrée sur l’émotion et le détail.
+          </p>
+  
+          <p class="about__text">
+            J’accompagne marques, organisateurs et passionnés dans la création
+            d’images fortes et cohérentes, pensées comme une véritable vitrine visuelle.
+          </p>
+          <a class="about__instagram" href="https://www.instagram.com/withmaelc/" target="_blank" rel="noopener noreferrer" aria-label="Voir mon Instagram">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+              <defs>
+                <linearGradient id="ig-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#F58529"/>
+                  <stop offset="25%" stop-color="#DD2A7B"/>
+                  <stop offset="50%" stop-color="#8134AF"/>
+                  <stop offset="75%" stop-color="#515BD4"/>
+                  <stop offset="100%" stop-color="#FEDA77"/>
+                </linearGradient>
+              </defs>
+          
+              <!-- Contour -->
+              <rect x="3" y="3" width="18" height="18" rx="5" ry="5" fill="none" stroke="url(#ig-gradient)" stroke-width="1.6"/>
+              <!-- Cercle -->
+              <circle cx="12" cy="12" r="4" fill="none" stroke="url(#ig-gradient)"stroke-width="1.6"/>
+              <!-- Point -->
+              <circle cx="17.2" cy="6.8" r="1" fill="url(#ig-gradient)"/>
+            </svg>
+            <span class="about__instagram-name">@withmaelc</span>
+          </a>
+        </div>
       </div>
+    </section>
 
-      <div class="about__content">
-        <h2 class="about__subtitle">
-          <span class="about__line1">Je me</span><br />
-          <span class="about__line2">présente</span>
-        </h2>
-
-        <p class="about__text">
-          Je suis Mael, photographe automobile freelance. Autodidacte, je construis
-          mon regard depuis 2023 à travers les voyages et les événements automobiles,
-          avec une approche centrée sur l’émotion et le détail.
-        </p>
-
-        <p class="about__text">
-          J’accompagne marques, organisateurs et passionnés dans la création
-          d’images fortes et cohérentes, pensées comme une véritable vitrine visuelle.
-        </p>
-        <a class="about__instagram" href="https://www.instagram.com/withmaelc/" target="_blank" rel="noopener noreferrer" aria-label="Voir mon Instagram">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-            <defs>
-              <linearGradient id="ig-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#F58529"/>
-                <stop offset="25%" stop-color="#DD2A7B"/>
-                <stop offset="50%" stop-color="#8134AF"/>
-                <stop offset="75%" stop-color="#515BD4"/>
-                <stop offset="100%" stop-color="#FEDA77"/>
-              </linearGradient>
-            </defs>
-        
-            <!-- Contour -->
-            <rect x="3" y="3" width="18" height="18" rx="5" ry="5" fill="none" stroke="url(#ig-gradient)" stroke-width="1.6"/>
-            <!-- Cercle -->
-            <circle cx="12" cy="12" r="4" fill="none" stroke="url(#ig-gradient)"stroke-width="1.6"/>
-            <!-- Point -->
-            <circle cx="17.2" cy="6.8" r="1" fill="url(#ig-gradient)"/>
-          </svg>
-          <span class="about__instagram-name">@withmaelc</span>
-        </a>
+    <!-- photo auto section -->
+    <section id="automotive" class="auto" aria-label="Univers automobile">
+      <div class="auto__wrap">
+        <header class="auto__header">
+          <h2 class="auto__title">UNIVERS AUTOMOBILE</h2>
+          <p class="auto__lead">Événements · Circuit · Héritage · Concessions</p>
+        </header>
+    
+        <!-- La grille sera remplie par le JSON -->
+        <div class="auto__grid" id="autoGrid" aria-live="polite"></div>
+    
+        <div class="auto__cta">
+          <a class="auto__btn auto__btn--primary" href="#contact">Me contacter</a>
+    
+          <a class="auto__btn auto__btn--secondary"
+             href="https://www.instagram.com/withmaelc/"
+             target="_blank"
+             rel="noopener noreferrer">
+            Voir plus sur Instagram
+          </a>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
     <footer class="section" aria-label="Pied de page">
       <small>© <span id="year"></span> Mael Constantin — Photographe automobile</small>
@@ -181,5 +205,6 @@
         });
       });
     </script>
+    <script src="./main.js" defer></script>
   </body>
 </html>
