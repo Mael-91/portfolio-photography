@@ -65,5 +65,27 @@ function escapeHtml(str) {
     .replaceAll("'", "&#039;");
 }
 
+// Désactiver clic droit / drag / drop uniquement sur la grille automobile
+document.addEventListener("contextmenu", (e) => {
+  const target = e.target;
+  if (target && target.closest && target.closest("#autoGrid")) {
+    e.preventDefault();
+  }
+});
+
+document.addEventListener("dragstart", (e) => {
+  const target = e.target;
+  if (target && target.closest && target.closest("#autoGrid")) {
+    e.preventDefault();
+  }
+});
+
+document.addEventListener("drop", (e) => {
+  const target = e.target;
+  if (target && target.closest && target.closest("#autoGrid")) {
+    e.preventDefault();
+  }
+});
+
 /* ✅ Un seul callback ici */
 document.addEventListener("DOMContentLoaded", loadAutomotiveGrid);
