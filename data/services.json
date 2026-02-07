@@ -40,8 +40,6 @@
   ],
   "cta": {
     "primaryText": "Demander un devis",
-    "primaryHref": "#contact",
-    "secondaryText": "Voir des projets récents sur Instagram",
-    "instagramHref": "https://www.instagram.com/TON_INSTAGRAM/"
+    "primaryHref": "#contact"
   }
 }
