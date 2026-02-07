@@ -13,6 +13,7 @@ async function loadAutomotiveGrid() {
         const src = item.src ?? "";
         const caption = item.caption ?? "";
         const alt = item.alt ?? caption ?? "Photographie automobile";
+
         return `
           <figure class="auto__card">
             <img class="auto__img" src="${src}" alt="${escapeHtml(alt)}" loading="lazy" decoding="async" />
@@ -21,9 +22,37 @@ async function loadAutomotiveGrid() {
         `;
       })
       .join("");
+
+    // ✅ IMPORTANT : appeler après injection du HTML
+    applyImageRatios();
   } catch (e) {
     console.error("Erreur chargement automotive.json :", e);
     grid.innerHTML = `<p style="text-align:center;color:#5B4F3E;">Impossible de charger la galerie pour le moment.</p>`;
+  }
+}
+
+/* ✅ Détection du ratio réel des images (hors de loadAutomotiveGrid) */
+function applyImageRatios() {
+  const images = document.querySelectorAll(".auto__img");
+
+  images.forEach((img) => {
+    if (img.complete && img.naturalWidth) {
+      setRatioClass(img);
+    } else {
+      img.addEventListener("load", () => setRatioClass(img), { once: true });
+    }
+  });
+}
+
+function setRatioClass(img) {
+  const ratio = img.naturalWidth / img.naturalHeight;
+
+  if (ratio >= 1.8) {
+    img.classList.add("is-wide");
+    img.classList.remove("is-standard");
+  } else {
+    img.classList.add("is-standard");
+    img.classList.remove("is-wide");
   }
 }
 
@@ -36,4 +65,5 @@ function escapeHtml(str) {
     .replaceAll("'", "&#039;");
 }
 
+/* ✅ Un seul callback ici */
 document.addEventListener("DOMContentLoaded", loadAutomotiveGrid);
