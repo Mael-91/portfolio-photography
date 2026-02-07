@@ -403,20 +403,15 @@ body {
 
 /* Grille masonry */
 .auto__grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-  align-items: start;
   columns: 3;
   column-gap: 18px;
 }
 
 /* Carte image + légende */
 .auto__card {
-  margin: 0 0 18px 0;
-  display: block;
-  position: relative;
   break-inside: avoid;
+  margin: 0 0 18px 0;
+  position: relative;
   z-index: 1;
 }
 
@@ -507,8 +502,7 @@ body {
 /* Tablette */
 @media (max-width: 1023px) {
   .auto__grid {
-    grid-template-columns: repeat(2, 1fr);
-     columns: 2;
+    columns: 2;
   }
 }
 
@@ -594,7 +588,6 @@ body {
     margin-bottom: 26px;
   }
   .auto__grid {
-    grid-template-columns: 1fr;
     columns: 1;
   }
   .auto__caption {
