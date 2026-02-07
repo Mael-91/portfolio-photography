@@ -401,25 +401,26 @@ body {
   letter-spacing: 0.04em;
 }
 
-/* Grille responsive */
+/* Grille masonry */
 .auto__grid {
   display: grid;
-  gap: 18px;
   grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  align-items: start;
 }
 
 /* Carte image + légende */
 .auto__card {
   margin: 0;
+  display: block;
 }
 
 .auto__img {
   width: 100%;
+  height: auto;        
   display: block;
   border-radius: 16px;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  background: #e6e6e6; /* fallback si image lente */
+  background: #e6e6e6;
 }
 
 .auto__caption {
