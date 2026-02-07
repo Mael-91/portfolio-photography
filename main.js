@@ -87,5 +87,87 @@ document.addEventListener("drop", (e) => {
   }
 });
 
+async function loadServices() {
+  const titleEl = document.getElementById("servicesTitle");
+  const introEl = document.getElementById("servicesIntro");
+  const fromEl = document.getElementById("servicesFrom");
+  const gridEl = document.getElementById("servicesGrid");
+  const ctaEl = document.getElementById("servicesCta");
+
+  // Si la section n'existe pas sur la page, on ne fait rien
+  if (!titleEl || !introEl || !fromEl || !gridEl || !ctaEl) return;
+
+  try {
+    const res = await fetch("./data/services.json", { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    // Header
+    titleEl.textContent = data.sectionTitle ?? "PRESTATIONS";
+    introEl.textContent = data.intro ?? "";
+
+    const fromLabel = data.fromLabel ?? "À partir de";
+    const fromPrice = data.fromPrice ?? "";
+    const fromNote = data.fromNote ?? "";
+
+    fromEl.innerHTML = `
+      <span class="services__from-label">${escapeHtml(fromLabel)}</span>
+      <span class="services__from-price">${escapeHtml(fromPrice)}</span>
+      <span class="services__from-note">${escapeHtml(fromNote)}</span>
+    `;
+
+    // Cards
+    const cards = Array.isArray(data.cards) ? data.cards : [];
+    gridEl.innerHTML = cards
+      .map((card) => {
+        const title = card.title ?? "";
+        const type = card.type ?? "list";
+        const text = card.text ?? "";
+        const items = Array.isArray(card.items) ? card.items : [];
+
+        const listHtml = items.length
+          ? `<ul class="services__list">${items.map((li) => `<li>${escapeHtml(li)}</li>`).join("")}</ul>`
+          : "";
+
+        const textHtml = text
+          ? `<p class="services__text">${escapeHtml(text)}</p>`
+          : "";
+
+        return `
+          <article class="services__card">
+            <h3 class="services__card-title">${escapeHtml(title)}</h3>
+            ${type === "mixed" ? `${textHtml}${listHtml}` : type === "text" ? textHtml : listHtml}
+          </article>
+        `;
+      })
+      .join("");
+
+    // CTA
+    const cta = data.cta ?? {};
+    const primaryText = cta.primaryText ?? "Demander un devis";
+    const primaryHref = cta.primaryHref ?? "#contact";
+    const secondaryText = cta.secondaryText ?? "Voir des projets récents sur Instagram";
+    const instagramHref = cta.instagramHref ?? "#";
+
+    ctaEl.innerHTML = `
+      <a class="services__btn services__btn--primary" href="${escapeHtml(primaryHref)}">${escapeHtml(primaryText)}</a>
+      <a class="services__btn services__btn--secondary" href="${escapeHtml(instagramHref)}" target="_blank" rel="noopener noreferrer">
+        ${escapeHtml(secondaryText)}
+      </a>
+    `;
+  } catch (e) {
+    console.error("Erreur chargement services.json :", e);
+    // fallback minimal
+    titleEl.textContent = "PRESTATIONS";
+    introEl.textContent = "";
+    fromEl.textContent = "";
+    gridEl.innerHTML = `<p style="text-align:center;color:#5B4F3E;">Impossible de charger les prestations pour le moment.</p>`;
+    ctaEl.innerHTML = "";
+  }
+}
+
 /* ✅ Un seul callback ici */
-document.addEventListener("DOMContentLoaded", loadAutomotiveGrid);
+document.addEventListener("DOMContentLoaded", () => {
+  loadAutomotiveGrid();
+  loadServices();
+});
