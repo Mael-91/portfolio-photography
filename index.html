@@ -175,73 +175,16 @@
     <section id="prestations" class="services" aria-label="Prestations">
       <div class="services__wrap">
         <header class="services__header">
-          <h2 class="services__title">PRESTATIONS</h2>
+          <h2 class="services__title" id="servicesTitle"></h2>
     
-          <p class="services__intro">
-            Chaque projet est unique. Les prestations sont définies selon vos besoins, le contexte et l’usage des images.
-          </p>
+          <p class="services__intro" id="servicesIntro"></p>
     
-          <p class="services__from">
-            <span class="services__from-label">À partir de</span>
-            <span class="services__from-price">XXX € / jour</span>
-            <span class="services__from-note">— sur devis selon le projet, la durée et les droits d’utilisation.</span>
-          </p>
+          <p class="services__from" id="servicesFrom"></p>
         </header>
     
-        <div class="services__grid">
-          <!-- Bloc 1 -->
-          <article class="services__card">
-            <h3 class="services__card-title">Base de prestation</h3>
-            <ul class="services__list">
-              <li>Prise de vue sur site, événement ou circuit</li>
-              <li>Sélection & post-traitement professionnel</li>
-              <li>Livraison numérique en haute définition</li>
-              <li>Galerie privée pour sélection & téléchargement</li>
-              <li>Archivage temporaire des fichiers</li>
-            </ul>
-          </article>
+        <div class="services__grid" id="servicesGrid" aria-live="polite"></div>
     
-          <!-- Bloc 2 -->
-          <article class="services__card">
-            <h3 class="services__card-title">Options & livrables</h3>
-            <ul class="services__list">
-              <li>Livraison numérique uniquement ou impressions (fine art)</li>
-              <li>Tirages : formats, supports et finitions sur demande</li>
-              <li>Archivage longue durée</li>
-              <li>Livraison express</li>
-              <li>Images optimisées web / réseaux sociaux (formats dédiés)</li>
-            </ul>
-          </article>
-    
-          <!-- Bloc 3 -->
-          <article class="services__card">
-            <h3 class="services__card-title">Droits d’utilisation</h3>
-            <p class="services__text">
-              Les droits d’utilisation sont définis selon l’usage (éditorial / communication / commercial), la durée et la zone de diffusion.
-              Une cession adaptée est proposée pour chaque projet.
-            </p>
-    
-            <ul class="services__list">
-              <li>Extension de droits (marque, concession, événement)</li>
-              <li>Usage commercial / international</li>
-              <li>Cession partielle ou totale selon besoin</li>
-            </ul>
-          </article>
-        </div>
-    
-        <div class="services__cta">
-          <!-- Si tu as une section contact plus bas, garde #contact -->
-          <a class="services__btn services__btn--primary" href="#contact">Demander un devis</a>
-  
-          <a
-            class="services__btn services__btn--secondary"
-            href="https://www.instagram.com/withmaelc/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Voir des projets récents sur Instagram
-          </a>
-        </div>
+        <div class="services__cta" id="servicesCta"></div>
       </div>
     </section>
 
