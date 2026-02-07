@@ -150,9 +150,8 @@ async function loadServices() {
     const instagramHref = cta.instagramHref ?? "#";
 
     ctaEl.innerHTML = `
-      <a class="services__btn services__btn--primary" href="${escapeHtml(primaryHref)}">${escapeHtml(primaryText)}</a>
-      <a class="services__btn services__btn--secondary" href="${escapeHtml(instagramHref)}" target="_blank" rel="noopener noreferrer">
-        ${escapeHtml(secondaryText)}
+      <a class="services__btn services__btn--primary" href="${escapeHtml(primaryHref)}">
+        ${escapeHtml(primaryText)}
       </a>
     `;
   } catch (e) {
