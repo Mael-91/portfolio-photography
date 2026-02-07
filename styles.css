@@ -372,7 +372,7 @@ body {
 /* ====== Section Automobile ====== */
 .auto {
   background: #ffffff;
-  padding: 84px clamp(24px, 4vw, 80px);
+  padding: 84px clamp(24px, 4vw, 80px) 60px;
 }
 
 .auto__wrap {
@@ -560,7 +560,7 @@ body {
 }
 
 .services__card-title {
-  margin: 0 0 12px 0;
+  margin: 0 0 18px 0;
   color: var(--title-color);
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -572,11 +572,11 @@ body {
   padding-left: 18px;
   color: var(--text-color);
   font-size: 15px;
-  line-height: 1.9; /* + d'air vertical */
+  line-height: 1.65; /* + d'air vertical */
 }
 
 .services__list li {
-  margin-bottom: 10px; /* espace entre chaque ligne */
+  margin-bottom: 6px; /* espace entre chaque ligne */
 }
 
 .services__list li:last-child {
