@@ -369,8 +369,121 @@ body {
   transform: scaleX(1);
 }
 
+/* ====== Section Automobile ====== */
+.auto {
+  background: #ffffff;
+  padding: 84px clamp(24px, 4vw, 80px);
+}
+
+.auto__wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.auto__header {
+  text-align: center;
+  margin-bottom: 34px;
+}
+
+.auto__title {
+  margin: 0 0 10px 0;
+  color: var(--title-color);
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  font-size: clamp(22px, 2.4vw, 34px);
+}
+
+.auto__lead {
+  margin: 0;
+  color: var(--text-color);
+  font-size: clamp(14px, 1.2vw, 16px);
+  letter-spacing: 0.04em;
+}
+
+/* Grille responsive */
+.auto__grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Carte image + légende */
+.auto__card {
+  margin: 0;
+}
+
+.auto__img {
+  width: 100%;
+  display: block;
+  border-radius: 16px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: #e6e6e6; /* fallback si image lente */
+}
+
+.auto__caption {
+  margin-top: 10px;
+  color: var(--text-color);
+  font-size: 14px;
+  letter-spacing: 0.03em;
+}
+
+/* CTA */
+.auto__cta {
+  margin-top: 32px;
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.auto__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 12px 22px;
+  border-radius: 999px;
+  text-decoration: none;
+
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  transition: transform 160ms ease, background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+
+.auto__btn--primary {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.auto__btn--primary:hover {
+  background: var(--btn-bg-hover);
+  transform: translateY(-1px);
+}
+
+.auto__btn--secondary {
+  background: transparent;
+  color: var(--title-color);
+  border: 1px solid rgba(42, 36, 27, 0.22);
+}
+
+.auto__btn--secondary:hover {
+  transform: translateY(-1px);
+  border-color: rgba(42, 36, 27, 0.35);
+}
+
 /* ====== Mobile ====== */
-/* Responsive : sur mobile, photo au-dessus puis texte */
+/* Tablette */
+@media (max-width: 1023px) {
+  .auto__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 
 @media (max-width: 767px) {
   .back-to-top {
@@ -448,6 +561,16 @@ body {
 
   .about__text {
     font-size: 15px;
+  }
+
+  .auto__header {
+    margin-bottom: 26px;
+  }
+  .auto__grid {
+    grid-template-columns: 1fr;
+  }
+  .auto__caption {
+    text-align: center;
   }
 }
 
