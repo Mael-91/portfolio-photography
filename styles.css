@@ -500,11 +500,11 @@ body {
 
 .services__header {
   text-align: center;
-  margin-bottom: 56px;
+  margin-bottom: 34px;
 }
 
 .services__title {
-  margin: 0 0 18px 0;
+  margin: 0 0 30px 0;
   color: var(--title-color);
   font-weight: 700;
   letter-spacing: 0.10em;
@@ -571,8 +571,16 @@ body {
   margin: 0;
   padding-left: 18px;
   color: var(--text-color);
-  line-height: 1.7;
   font-size: 15px;
+  line-height: 1.9; /* + d'air vertical */
+}
+
+.services__list li {
+  margin-bottom: 10px; /* espace entre chaque ligne */
+}
+
+.services__list li:last-child {
+  margin-bottom: 0;
 }
 
 .services__text {
