@@ -428,8 +428,9 @@ body {
   display: block;
   border-radius: 16px;
   background: #e6e6e6;
-  transition: transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 360ms cubic-bezier(0.2, 0.8, 0.2, 1);
   will-change: transform;
+  transform-origin: center top; /* centre horizontal + top */
 }
 
 .auto__caption {
@@ -490,8 +491,12 @@ body {
 
 /* Desktop uniquement */
 @media (hover: hover) and (pointer: fine) {
-  .auto__card:hover .auto__img {
-    transform: scale(1.35);
+  .auto__card:hover .auto__img.is-wide { 
+    transform: scale(1.55); 
+  }
+  
+  .auto__card:hover .auto__img.is-standard { 
+    transform: scale(1.25); 
   }
 }
 
