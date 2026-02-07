@@ -413,6 +413,13 @@ body {
 .auto__card {
   margin: 0;
   display: block;
+  position: relative;
+  transition: z-index 0ms linear 200ms;
+}
+
+.auto__card:hover {
+  z-index: 10; /* passe au-dessus des autres */
+  transition-delay: 0ms;
 }
 
 .auto__img {
@@ -421,6 +428,8 @@ body {
   display: block;
   border-radius: 16px;
   background: #e6e6e6;
+  transition: transform 260ms ease;
+  will-change: transform;
 }
 
 .auto__caption {
@@ -428,6 +437,7 @@ body {
   color: var(--text-color);
   font-size: 14px;
   letter-spacing: 0.03em;
+  transition: transform 260ms ease, opacity 260ms ease;
 }
 
 /* CTA */
@@ -476,6 +486,18 @@ body {
 .auto__btn--secondary:hover {
   transform: translateY(-1px);
   border-color: rgba(42, 36, 27, 0.35);
+}
+
+/* Effet au hover (desktop uniquement) */
+@media (hover: hover) and (pointer: fine) {
+  .auto__card:hover .auto__img {
+    transform: scale(1.12);
+  }
+
+  .auto__card:hover .auto__caption {
+    transform: translateY(4px) scale(1.05);
+    opacity: 1;
+  }
 }
 
 /* ====== Mobile ====== */
