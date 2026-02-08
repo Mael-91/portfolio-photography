@@ -372,7 +372,7 @@ body {
 /* ====== Section Automobile ====== */
 .auto {
   background: #ffffff;
-  padding: 84px clamp(24px, 4vw, 80px) 60px;
+  padding: 50px clamp(24px, 4vw, 80px) 60px;
 }
 
 .auto__wrap {
