@@ -479,13 +479,13 @@ body {
   transform: translateY(-1px);
 }
 
-.auto__btn--instagram {
+.auto__btn--secondary {
   background: transparent;
   color: var(--title-color);
   border: 1px solid rgba(42, 36, 27, 0.22);
 }
 
-.auto__btn--instagram:hover {
+.auto__btn--secondary:hover {
   transform: translateY(-1px);
   border-color: rgba(42, 36, 27, 0.35);
 }
