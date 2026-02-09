@@ -188,6 +188,178 @@
       </div>
     </section>
 
+    <section id="contact" class="contact" aria-label="Contact / Devis">
+      <div class="contact__wrap">
+        <header class="contact__header">
+          <h2 class="contact__title">CONTACT / DEVIS</h2>
+          <p class="contact__intro">
+            Décris ton besoin, je te réponds rapidement avec une proposition claire.
+          </p>
+        </header>
+    
+        <!-- Sélecteur -->
+        <div class="contact__type">
+          <label class="contact__label" for="contactType">Votre demande</label>
+          <select id="contactType" class="contact__select">
+            <option value="pro" selected>Devis pour professionnel</option>
+            <option value="part">Devis pour particulier</option>
+            <option value="info">Demande d'information / me contacter</option>
+          </select>
+        </div>
+    
+        <!-- Zone messages -->
+        <div id="contactStatus" class="contact__status" aria-live="polite"></div>
+    
+        <!-- FORM 1 : PRO -->
+        <form class="contact__form" id="formPro" name="devis-pro" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+          <input type="hidden" name="form-name" value="devis-pro" />
+          <p class="sr-only">
+            <label>Ne pas remplir : <input name="bot-field" /></label>
+          </p>
+    
+          <div class="contact__grid">
+            <div class="field">
+              <label for="proFirstName">Prénom (optionnel)</label>
+              <input id="proFirstName" name="prenom" type="text" autocomplete="given-name" />
+              <small class="field__error" data-error-for="proFirstName"></small>
+            </div>
+    
+            <div class="field">
+              <label for="proLastName">Nom (optionnel)</label>
+              <input id="proLastName" name="nom" type="text" autocomplete="family-name" />
+              <small class="field__error" data-error-for="proLastName"></small>
+            </div>
+    
+            <div class="field">
+              <label for="proCompany">Société *</label>
+              <input id="proCompany" name="societe" type="text" required />
+              <small class="field__error" data-error-for="proCompany"></small>
+            </div>
+    
+            <div class="field">
+              <label for="proEmail">Adresse mail *</label>
+              <input id="proEmail" name="email" type="email" required autocomplete="email" />
+              <small class="field__error" data-error-for="proEmail"></small>
+            </div>
+    
+            <div class="field">
+              <label for="proPhone">Téléphone *</label>
+              <input id="proPhone" name="telephone" type="tel" required inputmode="tel" autocomplete="tel"/>
+              <small class="field__error" data-error-for="proPhone"></small>
+            </div>
+    
+            <div class="field">
+              <label for="proDuration">Durée estimée (optionnel)</label>
+              <input id="proDuration" name="duree" type="text" placeholder="ex : 1 jour, 2 jours..." />
+              <small class="field__error" data-error-for="proDuration"></small>
+            </div>
+    
+            <div class="field field--full">
+              <label for="proMessage">Votre message *</label>
+              <textarea id="proMessage" name="message" required rows="6"></textarea>
+              <small class="field__error" data-error-for="proMessage"></small>
+            </div>
+    
+            <div class="field field--full">
+              <label class="checkbox">
+                <input id="proCall" name="contact_par_telephone" type="checkbox" required />
+                <span>Souhaitez-vous être contacté par téléphone ? *</span>
+              </label>
+              <small class="field__error" data-error-for="proCall"></small>
+            </div>
+          </div>
+    
+          <button class="contact__btn" type="submit">Demander un devis</button>
+        </form>
+    
+        <!-- FORM 2 : PARTICULIER -->
+        <form class="contact__form is-hidden" id="formPart" name="devis-particulier" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate >
+          <input type="hidden" name="form-name" value="devis-particulier" />
+          <p class="sr-only">
+            <label>Ne pas remplir : <input name="bot-field" /></label>
+          </p>
+    
+          <div class="contact__grid">
+            <div class="field">
+              <label for="partFirstName">Prénom *</label>
+              <input id="partFirstName" name="prenom" type="text" required autocomplete="given-name" />
+              <small class="field__error" data-error-for="partFirstName"></small>
+            </div>
+    
+            <div class="field">
+              <label for="partLastName">Nom *</label>
+              <input id="partLastName" name="nom" type="text" required autocomplete="family-name" />
+              <small class="field__error" data-error-for="partLastName"></small>
+            </div>
+    
+            <div class="field">
+              <label for="partPhone">Téléphone *</label>
+              <input id="partPhone" name="telephone" type="tel" required inputmode="tel" autocomplete="tel" />
+              <small class="field__error" data-error-for="partPhone"></small>
+            </div>
+    
+            <div class="field">
+              <label for="partEmail">Adresse mail *</label>
+              <input id="partEmail" name="email" type="email" required autocomplete="email" />
+              <small class="field__error" data-error-for="partEmail"></small>
+            </div>
+    
+            <div class="field field--full">
+              <label for="partMessage">Votre message *</label>
+              <textarea id="partMessage" name="message" required rows="6"></textarea>
+              <small class="field__error" data-error-for="partMessage"></small>
+            </div>
+    
+            <div class="field field--full">
+              <label class="checkbox">
+                <input id="partCall" name="contact_par_telephone" type="checkbox" required />
+                <span>Souhaitez-vous être contacté par téléphone ? *</span>
+              </label>
+              <small class="field__error" data-error-for="partCall"></small>
+            </div>
+          </div>
+    
+          <button class="contact__btn" type="submit">Demander un devis</button>
+        </form>
+    
+        <!-- FORM 3 : INFO -->
+        <form class="contact__form is-hidden" id="formInfo" name="contact-info" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+          <input type="hidden" name="form-name" value="contact-info" />
+          <p class="sr-only">
+            <label>Ne pas remplir : <input name="bot-field" /></label>
+          </p>
+    
+          <div class="contact__grid">
+            <div class="field">
+              <label for="infoFirstName">Prénom *</label>
+              <input id="infoFirstName" name="prenom" type="text" required autocomplete="given-name" />
+              <small class="field__error" data-error-for="infoFirstName"></small>
+            </div>
+    
+            <div class="field">
+              <label for="infoLastName">Nom *</label>
+              <input id="infoLastName" name="nom" type="text" required autocomplete="family-name" />
+              <small class="field__error" data-error-for="infoLastName"></small>
+            </div>
+    
+            <div class="field">
+              <label for="infoEmail">Adresse mail *</label>
+              <input id="infoEmail" name="email" type="email" required autocomplete="email" />
+              <small class="field__error" data-error-for="infoEmail"></small>
+            </div>
+    
+            <div class="field field--full">
+              <label for="infoMessage">Votre message *</label>
+              <textarea id="infoMessage" name="message" required rows="6"></textarea>
+              <small class="field__error" data-error-for="infoMessage"></small>
+            </div>
+          </div>
+    
+          <button class="contact__btn" type="submit">Envoyer</button>
+        </form>
+      </div>
+    </section>
+
     <footer class="section" aria-label="Pied de page">
       <small>© <span id="year"></span> Mael Constantin — Photographe automobile</small>
     </footer>
@@ -222,5 +394,6 @@
       });
     </script>
     <script src="./main.js" defer></script>
+    <script src="./contact.js" defer></script>
   </body>
 </html>
