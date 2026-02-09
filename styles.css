@@ -641,6 +641,165 @@ body {
   border-color: rgba(42, 36, 27, 0.35);
 }
 
+/* ====== Contact / Devis ====== */
+.contact {
+  background: #ffffff;
+  padding: 60px clamp(24px, 4vw, 80px);
+}
+
+.contact__wrap {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.contact__header {
+  text-align: center;
+  margin-bottom: 34px;
+}
+
+.contact__title {
+  margin: 0 0 18px 0;
+  color: var(--title-color);
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  font-size: clamp(22px, 2.4vw, 34px);
+}
+
+.contact__intro {
+  margin: 0 auto;
+  max-width: 60ch;
+  color: var(--text-color);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Sélecteur */
+.contact__type {
+  margin-bottom: 32px;
+}
+
+.contact__label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--title-color);
+}
+
+.contact__select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(42, 36, 27, 0.25);
+  font-size: 15px;
+  background: #fff;
+}
+
+/* Messages */
+.contact__status {
+  margin-bottom: 22px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.contact__status.is-error {
+  color: #a13535;
+}
+
+.contact__status.is-success {
+  color: #2f7a46;
+}
+
+.contact__status.is-loading {
+  color: var(--text-color);
+}
+
+/* Formulaires */
+.contact__form {
+  margin-top: 24px;
+}
+
+.contact__form.is-hidden {
+  display: none;
+}
+
+/* Grille */
+.contact__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.field--full {
+  grid-column: 1 / -1;
+}
+
+.field label {
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: var(--title-color);
+}
+
+.field input,
+.field textarea {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(42, 36, 27, 0.25);
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--btn-bg);
+}
+
+/* Checkbox */
+.checkbox {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 14px;
+}
+
+/* Erreurs */
+.field__error {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #a13535;
+  min-height: 14px;
+}
+
+/* Bouton */
+.contact__btn {
+  margin-top: 28px;
+  padding: 14px 28px;
+  border-radius: 999px;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: 1px solid rgba(0,0,0,0.08);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+
+.contact__btn:hover {
+  background: var(--btn-bg-hover);
+  transform: translateY(-1px);
+}
+
 /* Desktop uniquement */
 @media (hover: hover) and (pointer: fine) {
   .auto__card:hover .auto__img.is-wide { 
@@ -728,6 +887,10 @@ body {
 
   .about__instagram-name {
     display: none;
+  }
+
+  .contact__grid {
+    grid-template-columns: 1fr;
   }
 }
 
