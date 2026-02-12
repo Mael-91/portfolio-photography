@@ -36,42 +36,11 @@ function applyImageRatios() {
   const images = document.querySelectorAll(".auto__img");
 
   images.forEach((img) => {
-    const onLoad = () => {
-      setRatioClass(img);
-      applyMasonryGrid();
-    };
-
     if (img.complete && img.naturalWidth) {
-      onLoad();
+      setRatioClass(img);
     } else {
-      img.addEventListener("load", onLoad, { once: true });
-      img.addEventListener("error", () => applyMasonryGrid(), { once: true });
+      img.addEventListener("load", () => setRatioClass(img), { once: true });
     }
-  });
-}
-
-let masonryResizeBound = false;
-
-function applyMasonryGrid() {
-  const grid = document.getElementById("autoGrid");
-  if (!grid) return;
-
-  // Attendre le layout (évite les hauteurs = 0 / trop petites)
-  requestAnimationFrame(() => {
-    const rowHeight =
-      parseInt(getComputedStyle(grid).getPropertyValue("grid-auto-rows"), 10) || 10;
-
-    // gap peut être "18px" ou "18px 18px" selon navigateurs
-    const gap = getComputedStyle(grid).getPropertyValue("gap");
-    const rowGap = parseInt(gap, 10) || 0;
-
-    const cards = grid.querySelectorAll(".auto__card");
-
-    cards.forEach((card) => {
-      const cardHeight = card.getBoundingClientRect().height;
-      const span = Math.ceil((cardHeight + rowGap) / (rowHeight + rowGap));
-      card.style.gridRowEnd = `span ${span}`;
-    });
   });
 }
 
