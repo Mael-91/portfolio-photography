@@ -414,18 +414,19 @@ body {
   letter-spacing: 0.04em;
 }
 
-/* Grille masonry */
 .auto__grid {
-  columns: 3;
-  column-gap: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+
+  /* Masonry "fake" : on crée des lignes très petites */
+  grid-auto-rows: 10px;
 }
 
-/* Carte image + légende */
+/* Important : la carte doit pouvoir s'étirer sur plusieurs "row" */
 .auto__card {
-  break-inside: avoid;
-  margin: 0 0 18px 0;
-  position: relative;
-  z-index: 1;
+  margin: 0;           /* plus besoin de margin-bottom */
+  break-inside: auto;  /* n'a plus d'effet en grid, mais ok */
 }
 
 /* La carte passe au-dessus des autres */
@@ -905,7 +906,7 @@ body {
 /* Tablette */
 @media (max-width: 1023px) {
   .auto__grid {
-    columns: 2;
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .services__grid {
@@ -1007,7 +1008,7 @@ body {
     margin-bottom: 26px;
   }
   .auto__grid {
-    columns: 1;
+    grid-template-columns: 1fr;
   }
   .auto__caption {
     text-align: center;
