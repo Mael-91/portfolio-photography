@@ -426,7 +426,6 @@ body {
 /* Important : la carte doit pouvoir s'étirer sur plusieurs "row" */
 .auto__card {
   margin: 0;           /* plus besoin de margin-bottom */
-  break-inside: auto;  /* n'a plus d'effet en grid, mais ok */
 }
 
 /* La carte passe au-dessus des autres */
