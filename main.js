@@ -56,34 +56,23 @@ function applyMasonryGrid() {
   const grid = document.getElementById("autoGrid");
   if (!grid) return;
 
-  const rowHeight =
-    parseInt(getComputedStyle(grid).getPropertyValue("grid-auto-rows"), 10) || 10;
-  const rowGap =
-    parseInt(getComputedStyle(grid).getPropertyValue("gap"), 10) || 0;
+  // Attendre le layout (évite les hauteurs = 0 / trop petites)
+  requestAnimationFrame(() => {
+    const rowHeight =
+      parseInt(getComputedStyle(grid).getPropertyValue("grid-auto-rows"), 10) || 10;
 
-  const cards = grid.querySelectorAll(".auto__card");
+    // gap peut être "18px" ou "18px 18px" selon navigateurs
+    const gap = getComputedStyle(grid).getPropertyValue("gap");
+    const rowGap = parseInt(gap, 10) || 0;
 
-  const resizeCard = (card) => {
-    const cardHeight = card.getBoundingClientRect().height;
-    const span = Math.ceil((cardHeight + rowGap) / (rowHeight + rowGap));
-    card.style.gridRowEnd = `span ${span}`;
-  };
+    const cards = grid.querySelectorAll(".auto__card");
 
-  cards.forEach(resizeCard);
-
-  // ✅ On bind le resize UNE seule fois
-  if (!masonryResizeBound) {
-    masonryResizeBound = true;
-    window.addEventListener(
-      "resize",
-      () => {
-        const gridNow = document.getElementById("autoGrid");
-        if (!gridNow) return;
-        gridNow.querySelectorAll(".auto__card").forEach(resizeCard);
-      },
-      { passive: true }
-    );
-  }
+    cards.forEach((card) => {
+      const cardHeight = card.getBoundingClientRect().height;
+      const span = Math.ceil((cardHeight + rowGap) / (rowHeight + rowGap));
+      card.style.gridRowEnd = `span ${span}`;
+    });
+  });
 }
 
 function setRatioClass(img) {
