@@ -2,29 +2,29 @@
   "sectionTitle": "PRESTATIONS",
   "intro": "Chaque projet est unique. Les prestations sont définies selon vos besoins, le contexte et l’usage des images.",
   "fromLabel": "À partir de",
-  "fromPrice": "XXX € / jour",
+  "fromPrice": "400 € / jour",
   "fromNote": "— sur devis selon le projet, la durée et les droits d’utilisation.",
   "cards": [
     {
       "title": "Base de prestation",
       "type": "list",
       "items": [
-        "Prise de vue sur site, événement ou circuit",
+        "Prise de vue sur site, événement ou circuit, à domicile",
         "Sélection & post-traitement professionnel",
         "Livraison numérique en haute définition",
         "Galerie privée pour sélection & téléchargement",
-        "Archivage temporaire des fichiers"
+        "Archivage temporaire des fichiers (30 jours)"
       ]
     },
     {
       "title": "Options & livrables",
       "type": "list",
       "items": [
-        "Livraison numérique uniquement ou impressions (fine art)",
+        "Livraison numérique uniquement et/ou impressions",
         "Tirages : formats, supports et finitions sur demande",
-        "Archivage longue durée",
-        "Livraison express",
-        "Images optimisées web / réseaux sociaux (formats dédiés)"
+        "Archivage longue durée (en fonction de la durée des droits d'utilisation",
+        "Livraison express (24/48h selon disponibilité et quantité)",
+        "Images optimisées web / réseaux sociaux (formats dédiés si possible en fonction de la composition de la photo)"
       ]
     },
     {
@@ -32,9 +32,10 @@
       "type": "mixed",
       "text": "Les droits d’utilisation sont définis selon l’usage (éditorial / communication / commercial), la durée et la zone de diffusion. Une cession adaptée est proposée pour chaque projet.",
       "items": [
-        "Extension de droits (marque, concession, événement)",
-        "Usage commercial / international",
-        "Cession partielle ou totale selon besoin"
+        "Titularité exclusive des droits d’auteur conservée par le Photographe.",
+        "Chaque projet bénéficie d’un cadre d’utilisation clair et adapté à vos besoins.",
+        "Les droits sont définis au devis pour garantir transparence et cohérence avec votre communication.",
+        "Toute extension d’usage nécessite un accord écrit."
       ]
     }
   ],
