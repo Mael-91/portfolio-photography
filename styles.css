@@ -824,8 +824,6 @@ body {
   margin: 0 auto;
 
   display: flex;
-  align-items: center;
-  justify-content: space-between;
   flex-direction: column;
   gap: 18px;
 
@@ -834,6 +832,7 @@ body {
 }
 
 .footer__top {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -911,6 +910,7 @@ body {
 
 /* Ligne 2 */
 .footer__legal {
+  width: 100%;
   display: flex;
   justify-content: center;
   gap: 24px;
