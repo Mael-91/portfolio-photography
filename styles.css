@@ -831,8 +831,9 @@ body {
   padding-top: 22px;
 }
 
+/* Ligne 1 */
 .footer__top {
-  width: 100%;
+  width: 100%;                
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -891,7 +892,7 @@ body {
   transition: transform 160ms ease, border-color 160ms ease;
 }
 
-.footer__social:hover {
+.footer__social a:hover {
   transform: translateY(-1px);
   border-color: rgba(42, 36, 27, 0.35);
 }
@@ -904,9 +905,9 @@ body {
 
 /* Ligne 2 */
 .footer__legal {
-  width: 100%;
+  width: 100%;                 
   display: flex;
-  justify-content: center;
+  justify-content: center;     
   gap: 24px;
   font-size: 14px;
 }
@@ -1030,8 +1031,8 @@ body {
   }
 
   .footer__legal {
-    flex-direction: column;
-    gap: 10px;
+    flex-direction: wrap;
+    gap: 12px;
   }
 }
 
