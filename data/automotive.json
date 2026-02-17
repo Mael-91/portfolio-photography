@@ -16,17 +16,17 @@
   },
   { 
     "src": "assets/automotive/auto-04.jpg", 
-    "caption": "Rétromobile", 
-    "alt": "Photographie de voitures anciennes au salon Rétromobile" 
+    "caption": "Rétromobile — Mercedes-Benz 190 SL", 
+    "alt": "Photographie d'une Mercedes-Benz 190 SL Bleu lors du salon du rétromobile 2026 à Paris" 
   },
   { 
     "src": "assets/automotive/auto-05.jpg", 
-    "caption": "Héritage — Old Cars", 
-    "alt": "Photographie automobile héritage / old cars" 
+    "caption": "Rétromobile - Porsche 911 Jägermeifter", 
+    "alt": "Photographie d'une Porsche 911 Jägermeifer" 
   },
   { 
     "src": "assets/automotive/auto-06.jpg", 
-    "caption": "Ambiance urbaine", 
-    "alt": "Photographie automobile en ambiance urbaine" 
+    "caption": "24H du Mans - Ferrari n°51", 
+    "alt": "Photographie de la Hypercar Ferrari n°51 lors des 24H du Mans 2025" 
   }
 ]
