@@ -888,6 +888,7 @@ body {
   justify-content: center;
   gap: 24px;
   font-size: 13px;
+  margin-top: 32px;
 }
 
 .footer__legal a {
