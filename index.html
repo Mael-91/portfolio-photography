@@ -366,22 +366,30 @@
 
     <footer class="footer" aria-label="Pied de page">
       <div class="footer__wrap">
-        <small class="footer__copyright">
-          © <span id="year"></span> Mael Constantin — Photographe automobile freelance
-        </small>
     
-        <nav class="footer__links" aria-label="Liens légaux">
-          <a class="footer__link" href="/mentions-legales/">Mentions légales</a>
-          <a class="footer__link" href="/politique/">Politique de confidentialité</a>
+        <!-- Ligne 1 -->
+        <div class="footer__top">
+          <small class="footer__copyright">
+            © <span id="year"></span> Mael Constantin — Photographe automobile freelance
+          </small>
+    
+          <div class="footer__social">
+            <a href="https://www.instagram.com/withmaelc/"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Instagram">
+               Instagram
+            </a>
+          </div>
+        </div>
+    
+        <!-- Ligne 2 -->
+        <nav class="footer__legal" aria-label="Documents réglementaires">
+          <a href="/mentions-legales/">Mentions légales</a>
+          <a href="/politique/">Politique de confidentialité</a>
+          <a href="/cgv/">CGV</a>
         </nav>
     
-        <a class="footer__social" href="https://www.instagram.com/withmaelc/" target="_blank" rel="noopener noreferrer" aria-label="Voir mon Instagram" title="Instagram">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-            <rect x="3" y="3" width="18" height="18" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="1.6"/>
-            <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/>
-            <circle cx="17.2" cy="6.8" r="1" fill="currentColor"/>
-          </svg>
-        </a>
       </div>
     </footer>
 
