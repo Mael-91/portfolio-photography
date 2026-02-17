@@ -863,6 +863,12 @@ body {
   transform: scaleX(1);
 }
 
+.footer__links {
+  display:flex;
+  gap:18px;
+  align-items:center;
+}
+
 .footer__social {
   display: inline-flex;
   align-items: center;
@@ -986,6 +992,10 @@ body {
   .footer__wrap {
     flex-direction: column;
     text-align: center;
+  }
+
+  .footer__links{ 
+    justify-content:center; 
   }
 }
 
