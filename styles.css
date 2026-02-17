@@ -876,12 +876,6 @@ body {
 }
 
 .footer__social a {
-  font-size: 14px;
-  text-decoration: none;
-  color: var(--title-color);
-}
-
-.footer__social {
   display: inline-flex;
   align-items: center;
   justify-content: center;
