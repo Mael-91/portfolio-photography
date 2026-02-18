@@ -987,11 +987,6 @@ body {
     text-align: justify; /* tu voulais justifié partout */
   }
 
-  .about__photo {
-    box-shadow: none;
-    width: min(320px, 100%);
-  }
-
   .about__subtitle { 
     text-shadow: none; 
   }
@@ -1041,10 +1036,6 @@ body {
   .about {
     padding-top: 64px;
     padding-bottom: 64px;
-  }
-
-  .about__photo {
-    width: min(260px, 90%);
   }
 
   .about__text {
@@ -1108,11 +1099,6 @@ body {
 
   .about__line2 {
     padding-left: 0; /* enlève le décalage */
-  }
-
-  .about__photo {
-    width: min(280px, 90%);
-    min-height: 300px;
   }
 
   .custom-shape-divider-top-1770404141 {
