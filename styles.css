@@ -337,7 +337,7 @@ body {
 /* ===== Instagram ===== */
 .about__instagram {
   margin-top: 28px;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 10px;
   text-decoration: none;
