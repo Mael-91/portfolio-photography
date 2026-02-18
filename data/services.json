@@ -9,22 +9,21 @@
       "title": "Base de prestation",
       "type": "list",
       "items": [
-        "Prise de vue sur site, événement ou circuit, à domicile",
+        "Prise de vue sur site, événement, circuit ou à domicile",
         "Sélection & post-traitement professionnel",
-        "Livraison numérique en haute définition",
+        "Livraison numérique seulement",
         "Galerie privée pour sélection & téléchargement",
-        "Archivage temporaire des fichiers (30 jours)"
+        "Archivage temporaire des fichiers (30 jours)",
+        "Images optimisées selon support et photo"
       ]
     },
     {
       "title": "Options & livrables",
       "type": "list",
       "items": [
-        "Livraison numérique uniquement et/ou impressions",
         "Tirages : formats, supports et finitions sur demande",
         "Archivage longue durée (en fonction de la durée des droits d'utilisation",
-        "Livraison express (24/48h selon disponibilité et quantité)",
-        "Images optimisées web / réseaux sociaux (formats dédiés si possible en fonction de la composition de la photo)"
+        "Livraison express (24/48h selon disponibilité et quantité)"
       ]
     },
     {
