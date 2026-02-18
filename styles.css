@@ -291,16 +291,8 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-}
 
-.about__photo {
-  width: min(360px, 100%); /* limite la taille : ne remplit pas toute la colonne */
-  aspect-ratio: 4 / 5;     /* portrait */
-  border-radius: 18px;
-  background: #d9d9d9;     /* placeholder gris en attendant ta photo */
-  box-shadow: 14px 14px 0 rgba(15, 15, 15, 0.14);
-  display: block;
-  min-height: 320px; /* fallback si aspect-ratio bug */
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
 }
 
 /* Sous-titre "Je me / présente" */
