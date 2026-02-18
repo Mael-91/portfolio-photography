@@ -165,8 +165,39 @@ async function loadServices() {
   }
 }
 
-/* ✅ Un seul callback ici */
+let footerLoading = false;
+let footerLoaded = false;
+
+async function loadFooter() {
+  const container = document.getElementById("site-footer");
+  if (!container) return;
+
+  // Empêche double chargement
+  if (footerLoaded || footerLoading) return;
+
+  footerLoading = true;
+
+  try {
+    const res = await fetch("/components/footer.html", { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    container.innerHTML = await res.text();
+    container.removeAttribute("aria-hidden");
+
+    // Année dynamique
+    const yearEl = container.querySelector("#year");
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+    footerLoaded = true;
+  } catch (err) {
+    console.error("Erreur chargement footer:", err);
+  } finally {
+    footerLoading = false;
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  loadFooter();
   loadAutomotiveGrid();
   loadServices();
 });
