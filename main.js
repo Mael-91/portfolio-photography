@@ -196,8 +196,29 @@ async function loadFooter() {
   }
 }
 
+async function loadAbout() {
+  const textEl = document.getElementById("aboutText");
+  if (!textEl) return;
+
+  try {
+    const res = await fetch("./data/about.json", { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    const paragraphs = Array.isArray(data.paragraphs) ? data.paragraphs : [];
+
+    textEl.innerHTML = paragraphs
+      .map(p => `<p>${escapeHtml(p)}</p>`)
+      .join("");
+
+  } catch (err) {
+    console.error("Erreur chargement about.json :", err);
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   loadFooter();
   loadAutomotiveGrid();
   loadServices();
+  loadAbout();
 });
