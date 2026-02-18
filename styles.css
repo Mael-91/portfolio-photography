@@ -282,17 +282,17 @@ body {
 /* Colonne photo : ne prend pas tout le côté gauche */
 .about__media {
   width: 100%;
-  max-width: 520px; 
+  max-width: 520px;   
   aspect-ratio: 3 / 2;
   border-radius: 18px;
   overflow: hidden;
 
   background-image: url("/assets/portrait.jpg");
   background-size: cover;
-  background-position: center 35%;
+  background-position: center 60%;
   background-repeat: no-repeat;
 
-  box-shadow: 20px 20px 0 rgba(15, 15, 15, 0.12);
+  box-shadow: 14px 14px 0 rgba(15, 15, 15, 0.14);
 }
 
 /* Sous-titre "Je me / présente" */
