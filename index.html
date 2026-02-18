@@ -252,12 +252,6 @@
               <small class="field__error" data-error-for="proPhone"></small>
             </div>
     
-            <div class="field">
-              <label for="proDuration">Durée estimée (optionnel)</label>
-              <input id="proDuration" name="duree" type="text" placeholder="ex : 1 jour, 2 jours..." />
-              <small class="field__error" data-error-for="proDuration"></small>
-            </div>
-    
             <div class="field field--full">
               <label for="proMessage">Votre message *</label>
               <textarea id="proMessage" name="message" required rows="6"></textarea>
@@ -270,6 +264,20 @@
                 <span>Souhaitez-vous être contacté par téléphone ? *</span>
               </label>
               <small class="field__error" data-error-for="proCall"></small>
+            </div>
+
+            <div class="field field--full">
+              <label class="checkbox">
+                <input id="privacyConsent" name="consent_privacy" type="checkbox" required/>
+                <span>
+                  J’accepte que mes informations soient utilisées uniquement pour me recontacter, 
+                  conformément à la 
+                  <a href="/politique/" target="_blank" rel="noopener noreferrer">
+                    politique de confidentialité
+                  </a>. *
+                </span>
+              </label>
+              <small class="field__error" data-error-for="privacyConsent"></small>
             </div>
           </div>
     
@@ -316,13 +324,18 @@
     
             <div class="field field--full">
               <label class="checkbox">
-                <input id="partCall" name="contact_par_telephone" type="checkbox" required />
-                <span>Souhaitez-vous être contacté par téléphone ? *</span>
+                <input id="privacyConsent" name="consent_privacy" type="checkbox" required/>
+                <span>
+                  J’accepte que mes informations soient utilisées uniquement pour me recontacter, 
+                  conformément à la 
+                  <a href="/politique/" target="_blank" rel="noopener noreferrer">
+                    politique de confidentialité
+                  </a>. *
+                </span>
               </label>
-              <small class="field__error" data-error-for="partCall"></small>
+              <small class="field__error" data-error-for="privacyConsent"></small>
             </div>
-          </div>
-    
+          </div/
           <button class="contact__btn" type="submit">Demander un devis</button>
         </form>
     
@@ -356,6 +369,20 @@
               <label for="infoMessage">Votre message *</label>
               <textarea id="infoMessage" name="message" required rows="6"></textarea>
               <small class="field__error" data-error-for="infoMessage"></small>
+            </div>
+
+            <div class="field field--full">
+              <label class="checkbox">
+                <input id="privacyConsent" name="consent_privacy" type="checkbox" required/>
+                  <span>
+                    J’accepte que mes informations soient utilisées uniquement pour me recontacter, 
+                    conformément à la 
+                    <a href="/politique/" target="_blank" rel="noopener noreferrer">
+                      politique de confidentialité
+                    </a>. *
+                </span>
+              </label>
+              <small class="field__error" data-error-for="privacyConsent"></small>
             </div>
           </div>
     
