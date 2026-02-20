@@ -929,6 +929,15 @@ body {
   transform: scaleX(1);
 }
 
+.footer__location {
+  grid-column: 1 / -1;   
+  text-align: center;
+  margin-top: 12px;
+  font-size: 12px;
+  opacity: 0.7;
+  letter-spacing: 0.03em;
+}
+
 /* Desktop uniquement */
 @media (hover: hover) and (pointer: fine) {
   .auto__card:hover .auto__img.is-wide { 
