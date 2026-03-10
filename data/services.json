@@ -77,7 +77,7 @@
         },
         {
           "title": "Prestation Track Day",
-          "type": "text",
+          "type": "list",
           "price": "à partir de 400 € / jour",
           "items": [
             "Shooting sur circuit ou événement défini en amont",
