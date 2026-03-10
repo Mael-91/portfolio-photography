@@ -188,7 +188,7 @@
       </div>
     </section>
 
-    <section id="prestations" class="services" aria-label="Prestations">
+    <!--<section id="prestations" class="services" aria-label="Prestations">
       <div class="services__wrap">
         <header class="services__header">
           <h2 class="services__title" id="servicesTitle"></h2>
@@ -200,6 +200,46 @@
     
         <div class="services__grid" id="servicesGrid" aria-live="polite"></div>
     
+        <div class="services__cta" id="servicesCta"></div>
+      </div>
+    </section>-->
+
+    <section id="prestations" class="services" aria-label="Prestations">
+      <div class="services__wrap">
+        <header class="services__header">
+          <h2 class="services__title" id="servicesTitle"></h2>
+
+          <p class="services__intro" id="servicesIntro"></p>
+
+          <div class="services__switch" role="tablist" aria-label="Type de prestation">
+            <button
+              type="button"
+              class="services__switch-btn is-active"
+              id="servicesTabPro"
+              data-services-mode="pro"
+              role="tab"
+              aria-selected="true"
+            >
+              Professionnel
+            </button>
+
+            <button
+              type="button"
+              class="services__switch-btn"
+              id="servicesTabPart"
+              data-services-mode="part"
+              role="tab"
+              aria-selected="false"
+            >
+              Particulier
+            </button>
+          </div>
+
+          <p class="services__from" id="servicesFrom"></p>
+        </header>
+
+        <div class="services__grid" id="servicesGrid" aria-live="polite"></div>
+
         <div class="services__cta" id="servicesCta"></div>
       </div>
     </section>

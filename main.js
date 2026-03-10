@@ -86,7 +86,7 @@ document.addEventListener("drop", (e) => {
     e.preventDefault();
   }
 });
-
+/*
 async function loadServices() {
   const titleEl = document.getElementById("servicesTitle");
   const introEl = document.getElementById("servicesIntro");
@@ -157,6 +157,108 @@ async function loadServices() {
   } catch (e) {
     console.error("Erreur chargement services.json :", e);
     // fallback minimal
+    titleEl.textContent = "PRESTATIONS";
+    introEl.textContent = "";
+    fromEl.textContent = "";
+    gridEl.innerHTML = `<p style="text-align:center;color:#5B4F3E;">Impossible de charger les prestations pour le moment.</p>`;
+    ctaEl.innerHTML = "";
+  }
+}*/
+
+async function loadServices() {
+  const titleEl = document.getElementById("servicesTitle");
+  const introEl = document.getElementById("servicesIntro");
+  const fromEl = document.getElementById("servicesFrom");
+  const gridEl = document.getElementById("servicesGrid");
+  const ctaEl = document.getElementById("servicesCta");
+  const tabPro = document.getElementById("servicesTabPro");
+  const tabPart = document.getElementById("servicesTabPart");
+
+  if (!titleEl || !introEl || !fromEl || !gridEl || !ctaEl || !tabPro || !tabPart) return;
+
+  try {
+    const res = await fetch("./data/services.json", { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    titleEl.textContent = data.sectionTitle ?? "PRESTATIONS";
+    introEl.textContent = data.intro ?? "";
+
+    let currentMode = "pro";
+
+    function renderServices(mode) {
+      const modeData = data.modes?.[mode];
+      if (!modeData) return;
+
+      currentMode = mode;
+
+      // Toggle boutons
+      tabPro.classList.toggle("is-active", mode === "pro");
+      tabPart.classList.toggle("is-active", mode === "part");
+      tabPro.setAttribute("aria-selected", String(mode === "pro"));
+      tabPart.setAttribute("aria-selected", String(mode === "part"));
+
+      // Affichage du "À partir de..." uniquement pour pro
+      if (mode === "pro") {
+        const fromLabel = modeData.fromLabel ?? "À partir de";
+        const fromPrice = modeData.fromPrice ?? "";
+        const fromNote = modeData.fromNote ?? "";
+
+        fromEl.innerHTML = `
+          <span class="services__from-label">${escapeHtml(fromLabel)}</span>
+          <span class="services__from-price">${escapeHtml(fromPrice)}</span>
+          <span class="services__from-note">${escapeHtml(fromNote)}</span>
+        `;
+        fromEl.hidden = false;
+      } else {
+        fromEl.innerHTML = "";
+        fromEl.hidden = true;
+      }
+
+      // Cards
+      const cards = Array.isArray(modeData.cards) ? modeData.cards : [];
+      gridEl.innerHTML = cards
+        .map((card) => {
+          const title = card.title ?? "";
+          const type = card.type ?? "list";
+          const text = card.text ?? "";
+          const items = Array.isArray(card.items) ? card.items : [];
+
+          const listHtml = items.length
+            ? `<ul class="services__list">${items.map((li) => `<li>${escapeHtml(li)}</li>`).join("")}</ul>`
+            : "";
+
+          const textHtml = text
+            ? `<p class="services__text">${escapeHtml(text)}</p>`
+            : "";
+
+          return `
+            <article class="services__card">
+              <h3 class="services__card-title">${escapeHtml(title)}</h3>
+              ${type === "mixed" ? `${textHtml}${listHtml}` : type === "text" ? textHtml : listHtml}
+            </article>
+          `;
+        })
+        .join("");
+
+      // CTA
+      const cta = modeData.cta ?? {};
+      const primaryText = cta.primaryText ?? "Demander un devis";
+      const primaryHref = cta.primaryHref ?? "#contact";
+
+      ctaEl.innerHTML = `
+        <a class="services__btn services__btn--primary" href="${escapeHtml(primaryHref)}">
+          ${escapeHtml(primaryText)}
+        </a>
+      `;
+    }
+
+    tabPro.addEventListener("click", () => renderServices("pro"));
+    tabPart.addEventListener("click", () => renderServices("part"));
+
+    renderServices("pro");
+  } catch (e) {
+    console.error("Erreur chargement services.json :", e);
     titleEl.textContent = "PRESTATIONS";
     introEl.textContent = "";
     fromEl.textContent = "";

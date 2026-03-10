@@ -564,6 +564,38 @@ body {
   opacity: 0.9;
 }
 
+.services__switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  margin-top: 20px;
+  border-radius: 999px;
+  background: rgba(42, 36, 27, 0.06);
+}
+
+.services__switch-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--text-color);
+  font: inherit;
+  padding: 10px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.services__switch-btn.is-active {
+  background: #ffffff;
+  color: var(--title-color);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.services__switch-btn:hover {
+  transform: translateY(-1px);
+}
+
 /* Grille de blocs */
 .services__grid {
   display: grid;
