@@ -596,6 +596,8 @@ body {
   border-radius: 18px;
   padding: 26px;
   background: #ffffff;
+  display: flex;
+  flex-direction: column;
 }
 
 .services__card-title {
@@ -627,6 +629,15 @@ body {
   color: var(--text-color);
   line-height: 1.7;
   font-size: 15px;
+}
+
+.services__price {
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid rgba(42, 36, 27, 0.12);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--title-color);
 }
 
 /* CTA */

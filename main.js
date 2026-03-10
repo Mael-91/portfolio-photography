@@ -145,6 +145,7 @@ async function loadServices() {
           const type = card.type ?? "list";
           const text = card.text ?? "";
           const items = Array.isArray(card.items) ? card.items : [];
+          const price = card.price ?? "";
 
           const listHtml = items.length
             ? `<ul class="services__list">${items.map((li) => `<li>${escapeHtml(li)}</li>`).join("")}</ul>`
@@ -154,10 +155,15 @@ async function loadServices() {
             ? `<p class="services__text">${escapeHtml(text)}</p>`
             : "";
 
+          const priceHtml = price
+            ? `<p class="services__price">${escapeHtml(price)}</p>`
+            : "";
+
           return `
             <article class="services__card">
               <h3 class="services__card-title">${escapeHtml(title)}</h3>
               ${type === "mixed" ? `${textHtml}${listHtml}` : type === "text" ? textHtml : listHtml}
+              ${priceHtml}
             </article>
           `;
         })

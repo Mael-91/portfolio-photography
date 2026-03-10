@@ -50,31 +50,43 @@
     "part": {
       "cards": [
         {
-          "title": "Base de prestation",
+          "title": "Présentation Classic",
           "type": "list",
+          "Price": "150 € / session",
           "items": [
-            "Prise de vue à domicile, en extérieur ou sur lieu défini ensemble",
-            "Sélection & post-traitement professionnels",
-            "Livraison numérique uniquement",
-            "Galerie privée pour sélection & téléchargement",
-            "Archivage temporaire des fichiers (30 jours)",
-            "Images optimisées pour un usage personnel"
+            "Shooting à domicile ou sur site défini en amont pour 1 véhicule",
+            "Shooting de 1h à 2h selon le projet",
+            "Environ 20 photos retouchées selon le projet",
+            "Livraison numérique HD",
+            "Images optimisées pour un usage personnel et pour les réseaux sociaux",
+            "Aucune utilisation commerciale ou de communication autorisée"
           ]
         },
         {
-          "title": "Options & livrables",
+          "title": "Prestation Prenium",
           "type": "list",
+          "Price": "à partir de 300 € / session",
           "items": [
-            "Tirages photo premium : formats, supports et finitions sur demande",
-            "Archivage longue durée",
-            "Livraison express (24/48h selon disponibilité et volume)",
-            "Retouches complémentaires sur demande"
+            "Shooting à domicile et/ou sur site défini en amont pour 1 ou plusieurs véhicules",
+            "Shooting sur une demi-journée",
+            "Environ 40 photos retouchées",
+            "Livraison numérique HD et impression en laboratoire sur demande",
+            "Images optimisées pour un usage personnel et pour les réseaux sociaux",
+            "Aucune utilisation commerciale ou de communication autorisée"
           ]
         },
         {
-          "title": "Utilisation des images",
+          "title": "Prestation Track Day",
           "type": "text",
-          "text": "Les images livrées dans le cadre d’une prestation particulier sont destinées à un usage personnel, sauf mention contraire définie au devis."
+          "Price": "à partir de 400 € / jour",
+          "items": [
+            "Shooting sur circuit ou événement défini en amont",
+            "Nombre de photos livrées selon le temps de roulage et durée de la session",
+            "Images optimisées pour un usage personnel et pour les réseaux sociaux",
+            "Livraison numérique HD et impression en laboratoire sur demande",
+            "Gestion des accréditations et accès sur circuit géré par le client",
+            "Aucune utilisation commerciale ou de communication autorisée"
+          ]
         }
       ],
       "cta": {
