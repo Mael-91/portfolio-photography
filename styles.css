@@ -254,18 +254,6 @@ body {
   fill: #ffffff;
 }
 
-/* ====== Sections ====== */
-.section {
-  padding: 64px clamp(24px, 4vw, 80px);
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-.section h2 {
-  color: var(--title-color);
-  margin: 0 0 12px 0;
-}
-
 /* ====== Section À propos ====== */
 .about {
   background: #ffffff;
@@ -344,7 +332,6 @@ body {
   text-decoration: none;
   color: var(--title-color);
   justify-content: center;
-  text-decoration: none;
 }
 
 .about__instagram svg {
@@ -679,17 +666,6 @@ body {
   transform: translateY(-1px);
 }
 
-.services__btn--secondary {
-  background: transparent;
-  color: var(--title-color);
-  border: 1px solid rgba(42, 36, 27, 0.22);
-}
-
-.services__btn--secondary:hover {
-  transform: translateY(-1px);
-  border-color: rgba(42, 36, 27, 0.35);
-}
-
 /* ====== Contact / Devis ====== */
 .contact {
   background: #ffffff;
@@ -1019,10 +995,6 @@ body {
     justify-items: center;
   }
 
-  .about__media {
-    justify-content: center;
-  }
-
   .about__content {
     display: flex;
     flex-direction: column;
@@ -1069,12 +1041,7 @@ body {
   }
 
   .footer__wrap {
-    flex-direction: column;
     text-align: center;
-  }
-
-  .footer__links{ 
-    justify-content: center; 
   }
 }
 
