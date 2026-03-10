@@ -52,7 +52,7 @@
         {
           "title": "Présentation Classic",
           "type": "list",
-          "Price": "150 € / session",
+          "price": "150 € / session",
           "items": [
             "Shooting à domicile ou sur site défini en amont pour 1 véhicule",
             "Shooting de 1h à 2h selon le projet",
@@ -65,7 +65,7 @@
         {
           "title": "Prestation Prenium",
           "type": "list",
-          "Price": "à partir de 300 € / session",
+          "price": "à partir de 300 € / session",
           "items": [
             "Shooting à domicile et/ou sur site défini en amont pour 1 ou plusieurs véhicules",
             "Shooting sur une demi-journée",
@@ -78,7 +78,7 @@
         {
           "title": "Prestation Track Day",
           "type": "text",
-          "Price": "à partir de 400 € / jour",
+          "price": "à partir de 400 € / jour",
           "items": [
             "Shooting sur circuit ou événement défini en amont",
             "Nombre de photos livrées selon le temps de roulage et durée de la session",
