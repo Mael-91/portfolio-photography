@@ -613,11 +613,11 @@ body {
   padding-left: 18px;
   color: var(--text-color);
   font-size: 15px;
-  line-height: 1.65; /* + d'air vertical */
+  line-height: 1.65; 
 }
 
 .services__list li {
-  margin-bottom: 6px; /* espace entre chaque ligne */
+  margin-bottom: 6px; 
 }
 
 .services__list li:last-child {
@@ -632,7 +632,6 @@ body {
 }
 
 .services__price {
-  margin-top: auto;
   padding-top: 18px;
   border-top: 1px solid rgba(42, 36, 27, 0.12);
   font-size: 15px;
