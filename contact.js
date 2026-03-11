@@ -13,11 +13,22 @@ document.addEventListener("DOMContentLoaded", () => {
       if (input.checked) {
         const form = input.closest("form");
         const errorEl = form?.querySelector(`[data-error-for="${input.id}"]`);
-
         if (errorEl) {
           errorEl.textContent = "";
         }
+        clearMessage(form);
+      }
+    });
+  });
 
+  document.querySelectorAll('input[name="allow_phone_contact"]').forEach((input) => {
+    input.addEventListener("change", () => {
+      if (input.checked) {
+        const form = input.closest("form");
+        const errorEl = form?.querySelector(`[data-error-for="${input.id}"]`);
+        if (errorEl) {
+          errorEl.textContent = "";
+        }
         clearMessage(form);
       }
     });
@@ -58,32 +69,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const formData = new FormData(form);
         const requestType = formData.get("request_type");
 
-        if (requestType === "part" || requestType === "info" || requestType === "pro") {
-          const consentChecked = formData.get("consent_privacy") === "on";
+        const isValid = validateForm(form, requestType, formData);
 
-          if (!consentChecked) {
-            const consentInput = form.querySelector('input[name="consent_privacy"]');
-            const consentId = consentInput?.id;
-
-            if (consentId) {
-              showFieldError(
-                form,
-                consentId,
-                "Vous devez accepter la politique de confidentialité."
-              );
-            }
-
-            showMessage(
-              form,
-              "Veuillez corriger les champs du formulaire avant l’envoi.",
-              "error"
-            );
-
-            return;
-          }
+        if (!isValid) {
+          showMessage(
+            form,
+            "Veuillez corriger les champs du formulaire avant l’envoi.",
+            "error"
+          );
+          return;
         }
 
-        // Honeypot simple si tu gardes bot-field dans le HTML
         if (formData.get("bot-field")) {
           throw new Error("Envoi invalide.");
         }
@@ -97,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
             last_name: toNullableString(formData.get("last_name")),
             company: toNullableString(formData.get("company")),
             email: toRequiredString(formData.get("email")),
-            phone: toRequiredString(formData.get("phone")),
+            phone: toNullableString(formData.get("phone")),
             message: toRequiredString(formData.get("message")),
             allow_phone_contact: formData.get("allow_phone_contact") === "on",
             consent_privacy: formData.get("consent_privacy") === "on"
@@ -108,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
             first_name: toRequiredString(formData.get("first_name")),
             last_name: toRequiredString(formData.get("last_name")),
             email: toRequiredString(formData.get("email")),
-            phone: toRequiredString(formData.get("phone")),
+            phone: toNullableString(formData.get("phone")),
             message: toRequiredString(formData.get("message")),
             consent_privacy: formData.get("consent_privacy") === "on"
           };
@@ -125,8 +121,6 @@ document.addEventListener("DOMContentLoaded", () => {
           throw new Error("Type de formulaire invalide.");
         }
 
-        console.log("DATA SENT TO API:", data);
-
         const response = await fetch(API_ENDPOINT, {
           method: "POST",
           headers: {
@@ -136,7 +130,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         let result = null;
-
         try {
           result = await response.json();
         } catch {
@@ -178,6 +171,105 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+function validateForm(form, requestType, formData) {
+  let valid = true;
+
+  const requiredByType = {
+    pro: ["company", "email", "message"],
+    part: ["first_name", "last_name", "email", "message"],
+    info: ["first_name", "last_name", "email", "message"]
+  };
+
+  const requiredFields = requiredByType[requestType] || [];
+
+  requiredFields.forEach((fieldName) => {
+    const input = form.querySelector(`[name="${fieldName}"]`);
+    const value = formData.get(fieldName);
+
+    if (!input) return;
+
+    if (!String(value ?? "").trim()) {
+      valid = false;
+      showFieldError(form, input.id, getRequiredMessage(fieldName));
+    }
+  });
+
+  const emailInput = form.querySelector('[name="email"]');
+  const emailValue = formData.get("email");
+
+  if (emailInput && String(emailValue ?? "").trim()) {
+    if (!isValidEmail(String(emailValue).trim())) {
+      valid = false;
+      showFieldError(form, emailInput.id, "Veuillez renseigner une adresse mail valide.");
+    }
+  }
+
+  const phoneInput = form.querySelector('[name="phone"]');
+  const phoneValue = formData.get("phone");
+
+  if (phoneInput && String(phoneValue ?? "").trim()) {
+    if (!isValidPhone(String(phoneValue).trim())) {
+      valid = false;
+      showFieldError(form, phoneInput.id, "Veuillez renseigner un numéro de téléphone valide.");
+    }
+  }
+
+  if (requestType === "part" || requestType === "info" || requestType === "pro") {
+    const consentInput = form.querySelector('input[name="consent_privacy"]');
+    if (consentInput) {
+      const consentChecked = formData.get("consent_privacy") === "on";
+
+      if (!consentChecked) {
+        valid = false;
+        showFieldError(
+          form,
+          consentInput.id,
+          "Vous devez accepter la politique de confidentialité."
+        );
+      }
+    }
+  }
+
+  if (requestType === "pro") {
+    const phoneConsentInput = form.querySelector('input[name="allow_phone_contact"]');
+    if (phoneConsentInput) {
+      const phoneConsentChecked = formData.get("allow_phone_contact") === "on";
+
+      if (!phoneConsentChecked) {
+        valid = false;
+        showFieldError(
+          form,
+          phoneConsentInput.id,
+          "Veuillez indiquer si vous acceptez d’être contacté par téléphone."
+        );
+      }
+    }
+  }
+
+  return valid;
+}
+
+function getRequiredMessage(fieldName) {
+  const messages = {
+    first_name: "Le prénom est obligatoire.",
+    last_name: "Le nom est obligatoire.",
+    company: "La société est obligatoire.",
+    email: "L’adresse mail est obligatoire.",
+    phone: "Le téléphone est obligatoire.",
+    message: "Le message est obligatoire."
+  };
+
+  return messages[fieldName] || "Ce champ est obligatoire.";
+}
+
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function isValidPhone(phone) {
+  return /^[0-9+\s().-]{6,25}$/.test(phone);
+}
 
 function toRequiredString(value) {
   return String(value ?? "").trim();

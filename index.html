@@ -296,8 +296,8 @@
             </div>
     
             <div class="field">
-              <label for="proPhone">Téléphone *</label>
-              <input id="proPhone" name="phone" type="tel" required inputmode="tel" autocomplete="tel"/>
+              <label for="proPhone">Téléphone</label>
+              <input id="proPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" pattern="[0-9+\s().-]*"/>
               <small class="field__error" data-error-for="proPhone"></small>
             </div>
     
@@ -309,8 +309,8 @@
     
             <div class="field field--full">
               <label class="checkbox">
-                <input id="proCall" name="allow_phone_contact" type="checkbox" required />
-                <span>Souhaitez-vous être contacté par téléphone ? *</span>
+                <input id="proCall" name="allow_phone_contact" type="checkbox" />
+                <span>Je souhaite être contacté par téléphone</span>
               </label>
               <small class="field__error" data-error-for="proCall"></small>
             </div>
@@ -354,8 +354,8 @@
             </div>
     
             <div class="field">
-              <label for="partPhone">Téléphone *</label>
-              <input id="partPhone" name="phone" type="tel" required inputmode="tel" autocomplete="tel" />
+              <label for="partPhone">Téléphone</label>
+              <input id="partPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" pattern="[0-9+\s().-]*" />
               <small class="field__error" data-error-for="partPhone"></small>
             </div>
     
