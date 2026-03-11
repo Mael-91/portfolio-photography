@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const formData = new FormData(form);
         const requestType = formData.get("request_type");
 
-        if (requestType === "part" || requestType === "info") {
+        if (requestType === "part" || requestType === "info" || requestType === "pro") {
           const consentChecked = formData.get("consent_privacy") === "on";
 
           if (!consentChecked) {
@@ -99,7 +99,8 @@ document.addEventListener("DOMContentLoaded", () => {
             email: toRequiredString(formData.get("email")),
             phone: toRequiredString(formData.get("phone")),
             message: toRequiredString(formData.get("message")),
-            allow_phone_contact: formData.get("allow_phone_contact") === "on"
+            allow_phone_contact: formData.get("allow_phone_contact") === "on",
+            consent_privacy: formData.get("consent_privacy") === "on"
           };
         } else if (requestType === "part") {
           data = {
