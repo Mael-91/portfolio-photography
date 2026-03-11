@@ -8,6 +8,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const forms = [formPro, formPart, formInfo].filter(Boolean);
 
+  document.querySelectorAll('input[name="consent_privacy"]').forEach((input) => {
+    input.addEventListener("change", () => {
+      if (input.checked) {
+        const form = input.closest("form");
+        const errorEl = form?.querySelector(`[data-error-for="${input.id}"]`);
+
+        if (errorEl) {
+          errorEl.textContent = "";
+        }
+
+        clearMessage(form);
+      }
+    });
+  });
+
   function showForm(type) {
     if (!formPro || !formPart || !formInfo) return;
 
@@ -29,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
 
       clearMessage(form);
+      clearFieldErrors(form);
 
       const submitBtn = form.querySelector("button[type='submit']");
       const originalText = submitBtn ? submitBtn.textContent : "";
@@ -41,6 +57,31 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         const formData = new FormData(form);
         const requestType = formData.get("request_type");
+
+        if (requestType === "part" || requestType === "info") {
+          const consentChecked = formData.get("consent_privacy") === "on";
+
+          if (!consentChecked) {
+            const consentInput = form.querySelector('input[name="consent_privacy"]');
+            const consentId = consentInput?.id;
+
+            if (consentId) {
+              showFieldError(
+                form,
+                consentId,
+                "Vous devez accepter la politique de confidentialité."
+              );
+            }
+
+            showMessage(
+              form,
+              "Veuillez corriger les champs du formulaire avant l’envoi.",
+              "error"
+            );
+
+            return;
+          }
+        }
 
         // Honeypot simple si tu gardes bot-field dans le HTML
         if (formData.get("bot-field")) {
@@ -94,6 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         let result = null;
+
         try {
           result = await response.json();
         } catch {
@@ -151,6 +193,8 @@ function extractZodErrors(errors) {
 }
 
 function showMessage(form, message, type) {
+  if (!form) return;
+
   let box = form.querySelector(".form__message");
 
   if (!box) {
@@ -165,8 +209,24 @@ function showMessage(form, message, type) {
 }
 
 function clearMessage(form) {
+  if (!form) return;
+
   const box = form.querySelector(".form__message");
   if (box) {
     box.remove();
   }
+}
+
+function showFieldError(form, fieldId, message) {
+  const errorEl = form.querySelector(`[data-error-for="${fieldId}"]`);
+  if (errorEl) {
+    errorEl.textContent = message;
+  }
+}
+
+function clearFieldErrors(form) {
+  const errors = form.querySelectorAll(".field__error");
+  errors.forEach((el) => {
+    el.textContent = "";
+  });
 }
