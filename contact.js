@@ -231,22 +231,6 @@ function validateForm(form, requestType, formData) {
     }
   }
 
-  if (requestType === "pro") {
-    const phoneConsentInput = form.querySelector('input[name="allow_phone_contact"]');
-    if (phoneConsentInput) {
-      const phoneConsentChecked = formData.get("allow_phone_contact") === "on";
-
-      if (!phoneConsentChecked) {
-        valid = false;
-        showFieldError(
-          form,
-          phoneConsentInput.id,
-          "Veuillez indiquer si vous acceptez d’être contacté par téléphone."
-        );
-      }
-    }
-  }
-
   return valid;
 }
 
