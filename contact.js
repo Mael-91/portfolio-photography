@@ -1,122 +1,113 @@
-// --- CONTACT / NETLIFY FORMS (AJAX) ---
-
-function encodeForm(form) {
-  const formData = new FormData(form);
-  // Netlify: body URL-encoded recommandé pour les données simples
-  return new URLSearchParams(formData).toString();
-}
-
-function setStatus(type, message) {
-  const el = document.getElementById("contactStatus");
-  if (!el) return;
-  el.className = "contact__status " + (type ? `is-${type}` : "");
-  el.textContent = message || "";
-}
-
-function clearFieldErrors(form) {
-  form.querySelectorAll(".field__error").forEach((e) => (e.textContent = ""));
-}
-
-function showFieldError(input, message) {
-  const form = input.closest("form");
-  const err = form?.querySelector(`[data-error-for="${input.id}"]`);
-  if (err) err.textContent = message;
-}
-
-function validateForm(form) {
-  clearFieldErrors(form);
-  setStatus("", "");
-
-  // Utilise les contraintes HTML (required, type=email, etc.)
-  const inputs = Array.from(form.querySelectorAll("input, textarea, select"));
-
-  let ok = true;
-
-  for (const el of inputs) {
-    if (!el.willValidate) continue;
-
-    // force la validation du champ
-    if (!el.checkValidity()) {
-      ok = false;
-
-      // Messages propres (tu peux affiner ensuite)
-      let msg = el.validationMessage;
-
-      if (el.type === "email" && el.validity.typeMismatch) {
-        msg = "Merci de saisir une adresse email valide.";
-      } else if (el.type === "checkbox" && el.validity.valueMissing) {
-        msg = "Merci de cocher cette case.";
-      } else if (el.validity.valueMissing) {
-        msg = "Ce champ est obligatoire.";
-      }
-
-      showFieldError(el, msg);
-    }
-  }
-
-  if (!ok) {
-    setStatus("error", "Merci de corriger les champs en surbrillance.");
-  }
-
-  return ok;
-}
-
-function showFormByType(type) {
-  const pro = document.getElementById("formPro");
-  const part = document.getElementById("formPart");
-  const info = document.getElementById("formInfo");
-
-  [pro, part, info].forEach((f) => f?.classList.add("is-hidden"));
-  setStatus("", "");
-
-  if (type === "pro") pro?.classList.remove("is-hidden");
-  if (type === "part") part?.classList.remove("is-hidden");
-  if (type === "info") info?.classList.remove("is-hidden");
-}
-
-async function handleNetlifyAjaxSubmit(e) {
-  e.preventDefault();
-
-  const form = e.target;
-  if (!(form instanceof HTMLFormElement)) return;
-
-  if (!validateForm(form)) return;
-
-  setStatus("loading", "Envoi en cours…");
-
-  try {
-    const body = encodeForm(form);
-
-    const res = await fetch("/", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body,
-    });
-
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-    // OK
-    form.reset();
-    setStatus("success", "Message envoyé avec succès. Je reviens vers vous rapidement.");
-  } catch (err) {
-    console.error(err);
-    setStatus(
-      "error",
-      "Une erreur est survenue lors de l’envoi. Réessayez ou contactez-moi par email."
-    );
-  }
-}
+const API_ENDPOINT = "https://api.maelconstantin.fr/contact";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const select = document.getElementById("contactType");
-  if (select) {
-    showFormByType(select.value);
-    select.addEventListener("change", () => showFormByType(select.value));
+
+  const forms = document.querySelectorAll(".contact__form");
+
+  forms.forEach((form) => {
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const submitBtn = form.querySelector("button[type='submit']");
+      const originalText = submitBtn.textContent;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Envoi...";
+
+      try {
+
+        const formData = new FormData(form);
+
+        const data = {
+          request_type: formData.get("request_type"),
+          first_name: formData.get("first_name") || null,
+          last_name: formData.get("last_name") || null,
+          company: formData.get("company") || null,
+          email: formData.get("email"),
+          phone: formData.get("phone") || null,
+          message: formData.get("message"),
+          allow_phone_contact: formData.get("allow_phone_contact") === "on",
+          consent_privacy: formData.get("consent_privacy") === "on"
+        };
+
+        const response = await fetch(API_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
+
+        let result = null;
+
+        try {
+          result = await response.json();
+        } catch {
+          throw new Error("Réponse serveur invalide");
+        }
+
+        if (!response.ok || result.success === false) {
+
+          const message =
+            result?.error ||
+            "Une erreur est survenue lors de l'envoi du formulaire.";
+
+          showMessage(form, message, "error");
+          return;
+        }
+
+        showMessage(
+          form,
+          "Votre message a bien été envoyé. Je vous répondrai rapidement.",
+          "success"
+        );
+
+        form.reset();
+
+      } catch (error) {
+
+        console.error("Erreur formulaire :", error);
+
+        showMessage(
+          form,
+          "Impossible d'envoyer le formulaire. Vérifiez votre connexion ou réessayez plus tard.",
+          "error"
+        );
+
+      } finally {
+
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+
+      }
+
+    });
+
+  });
+
+});
+
+
+function showMessage(form, message, type) {
+
+  let box = form.querySelector(".form__message");
+
+  if (!box) {
+    box = document.createElement("div");
+    box.className = "form__message";
+    form.prepend(box);
   }
 
-  // Branche les 3 forms
-  ["formPro", "formPart", "formInfo"].forEach((id) => {
-    const f = document.getElementById(id);
-    if (f) f.addEventListener("submit", handleNetlifyAjaxSubmit);
-  });
-});
+  box.textContent = message;
+
+  box.classList.remove("form__message--success");
+  box.classList.remove("form__message--error");
+
+  if (type === "success") {
+    box.classList.add("form__message--success");
+  } else {
+    box.classList.add("form__message--error");
+  }
+
+}

@@ -267,8 +267,8 @@
         <div id="contactStatus" class="contact__status" aria-live="polite"></div>
     
         <!-- FORM 1 : PRO -->
-        <form class="contact__form" id="formPro" name="devis-pro" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
-          <input type="hidden" name="form-name" value="devis-pro" />
+        <form class="contact__form" id="formPro" method="POST" data-request-type="pro" novalidate>
+          <input type="hidden" name="request_type" value="pro" />
           <p class="sr-only">
             <label>Ne pas remplir : <input name="bot-field" /></label>
           </p>
@@ -276,19 +276,19 @@
           <div class="contact__grid">
             <div class="field">
               <label for="proFirstName">Prénom (optionnel)</label>
-              <input id="proFirstName" name="prenom" type="text" autocomplete="given-name" />
+              <input id="proFirstName" name="first_name" type="text" autocomplete="given-name" />
               <small class="field__error" data-error-for="proFirstName"></small>
             </div>
     
             <div class="field">
               <label for="proLastName">Nom (optionnel)</label>
-              <input id="proLastName" name="nom" type="text" autocomplete="family-name" />
+              <input id="proLastName" name="lastname" type="text" autocomplete="family-name" />
               <small class="field__error" data-error-for="proLastName"></small>
             </div>
     
             <div class="field">
               <label for="proCompany">Société *</label>
-              <input id="proCompany" name="societe" type="text" required />
+              <input id="proCompany" name="compagny" type="text" required />
               <small class="field__error" data-error-for="proCompany"></small>
             </div>
     
@@ -300,7 +300,7 @@
     
             <div class="field">
               <label for="proPhone">Téléphone *</label>
-              <input id="proPhone" name="telephone" type="tel" required inputmode="tel" autocomplete="tel"/>
+              <input id="proPhone" name="phone" type="tel" required inputmode="tel" autocomplete="tel"/>
               <small class="field__error" data-error-for="proPhone"></small>
             </div>
     
@@ -312,7 +312,7 @@
     
             <div class="field field--full">
               <label class="checkbox">
-                <input id="proCall" name="contact_par_telephone" type="checkbox" required />
+                <input id="proCall" name="allow_phone_contact" type="checkbox" required />
                 <span>Souhaitez-vous être contacté par téléphone ? *</span>
               </label>
               <small class="field__error" data-error-for="proCall"></small>
@@ -337,8 +337,8 @@
         </form>
     
         <!-- FORM 2 : PARTICULIER -->
-        <form class="contact__form is-hidden" id="formPart" name="devis-particulier" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate >
-          <input type="hidden" name="form-name" value="devis-particulier" />
+        <form class="contact__form is-hidden" id="formPart" method="POST" data-request-type="part" novalidate>
+          <input type="hidden" name="request_type" value="part" />
           <p class="sr-only">
             <label>Ne pas remplir : <input name="bot-field" /></label>
           </p>
@@ -346,19 +346,19 @@
           <div class="contact__grid">
             <div class="field">
               <label for="partFirstName">Prénom *</label>
-              <input id="partFirstName" name="prenom" type="text" required autocomplete="given-name" />
+              <input id="partFirstName" name="first_name" type="text" required autocomplete="given-name" />
               <small class="field__error" data-error-for="partFirstName"></small>
             </div>
     
             <div class="field">
               <label for="partLastName">Nom *</label>
-              <input id="partLastName" name="nom" type="text" required autocomplete="family-name" />
+              <input id="partLastName" name="last_name" type="text" required autocomplete="family-name" />
               <small class="field__error" data-error-for="partLastName"></small>
             </div>
     
             <div class="field">
               <label for="partPhone">Téléphone *</label>
-              <input id="partPhone" name="telephone" type="tel" required inputmode="tel" autocomplete="tel" />
+              <input id="partPhone" name="phone" type="tel" required inputmode="tel" autocomplete="tel" />
               <small class="field__error" data-error-for="partPhone"></small>
             </div>
     
@@ -392,8 +392,8 @@
         </form>
     
         <!-- FORM 3 : INFO -->
-        <form class="contact__form is-hidden" id="formInfo" name="contact-info" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
-          <input type="hidden" name="form-name" value="contact-info" />
+        <form class="contact__form is-hidden" id="formInfo" method="POST" data-request-type="info" novalidate>
+          <input type="hidden" name="request_type" value="info" />
           <p class="sr-only">
             <label>Ne pas remplir : <input name="bot-field" /></label>
           </p>
@@ -401,13 +401,13 @@
           <div class="contact__grid">
             <div class="field">
               <label for="infoFirstName">Prénom *</label>
-              <input id="infoFirstName" name="prenom" type="text" required autocomplete="given-name" />
+              <input id="infoFirstName" name="first_name" type="text" required autocomplete="given-name" />
               <small class="field__error" data-error-for="infoFirstName"></small>
             </div>
     
             <div class="field">
               <label for="infoLastName">Nom *</label>
-              <input id="infoLastName" name="nom" type="text" required autocomplete="family-name" />
+              <input id="infoLastName" name="last_name" type="text" required autocomplete="family-name" />
               <small class="field__error" data-error-for="infoLastName"></small>
             </div>
     
