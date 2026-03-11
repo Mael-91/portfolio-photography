@@ -268,7 +268,19 @@ function isValidEmail(email) {
 }
 
 function isValidPhone(phone) {
-  return /^[0-9+\s().-]{6,25}$/.test(phone);
+  const normalized = phone.replace(/[\s().-]/g, "");
+
+  // format international +33XXXXXXXXX
+  if (/^\+?[1-9]\d{7,14}$/.test(normalized)) {
+    return true;
+  }
+
+  // format français 0X XX XX XX XX
+  if (/^0\d{9}$/.test(normalized)) {
+    return true;
+  }
+
+  return false;
 }
 
 function toRequiredString(value) {
