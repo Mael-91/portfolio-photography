@@ -106,6 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
             email: toRequiredString(formData.get("email")),
             phone: toNullableString(formData.get("phone")),
             message: toRequiredString(formData.get("message")),
+            allow_phone_contact: formData.get("allow_phone_contact") === "on",
             consent_privacy: formData.get("consent_privacy") === "on"
           };
         } else if (requestType === "info") {
