@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const container = document.getElementById("legalContent");
-  const meta = document.getElementById("legalMeta");
   const type = document.body.dataset.documentType;
+  const dateElement = document.getElementById("legalDate");
 
   if (!type || !container) return;
 
@@ -23,13 +23,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Injection HTML
     container.innerHTML = doc.contentHtml;
 
-    // Meta info
-    if (meta) {
-      const date = doc.publishedAt
-        ? new Date(doc.publishedAt).toLocaleDateString("fr-FR")
-        : "date inconnue";
+    if (dateElement) {
+        const date = doc.publishedAt
+          ? new Date(doc.publishedAt).toLocaleDateString("fr-FR", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })
+          : "date inconnue";
 
-      meta.innerText = `Version ${doc.versionLabel} — publiée le ${date}`;
+        dateElement.innerText = `${date} — Version ${doc.versionLabel}`;
     }
 
   } catch (err) {
