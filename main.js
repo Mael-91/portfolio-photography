@@ -202,13 +202,23 @@ document.addEventListener("drop", (e) => {
 async function loadServices() {
   const titleEl = document.getElementById("servicesTitle");
   const introEl = document.getElementById("servicesIntro");
+  const modeIntroEl = document.getElementById("servicesModeIntro");
   const fromEl = document.getElementById("servicesFrom");
   const gridEl = document.getElementById("servicesGrid");
   const ctaEl = document.getElementById("servicesCta");
   const tabPro = document.getElementById("servicesTabPro");
   const tabPart = document.getElementById("servicesTabPart");
 
-  if (!titleEl || !introEl || !fromEl || !gridEl || !ctaEl || !tabPro || !tabPart) return;
+  if (
+    !titleEl ||
+    !introEl ||
+    !modeIntroEl ||
+    !fromEl ||
+    !gridEl ||
+    !ctaEl ||
+    !tabPro ||
+    !tabPart
+  ) return;
 
   const API_URL = "https://api.maelconstantin.fr/services";
   const FALLBACK_JSON_URL = "./data/services.json";
@@ -221,7 +231,11 @@ async function loadServices() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const apiData = await res.json();
 
-    servicesData = normalizeServicesApiData(apiData);
+    const fallbackRes = await fetch(FALLBACK_JSON_URL, { cache: "no-store" });
+    if (!fallbackRes.ok) throw new Error(`HTTP ${fallbackRes.status}`);
+    const fallbackData = await fallbackRes.json();
+
+    servicesData = normalizeServicesApiData(apiData, fallbackData);
   } catch (error) {
     console.warn("API services indisponible, fallback sur services.json :", error);
 
@@ -236,6 +250,7 @@ async function loadServices() {
 
       titleEl.textContent = "PRESTATIONS";
       introEl.textContent = "";
+      modeIntroEl.innerHTML = "";
       fromEl.textContent = "";
       gridEl.innerHTML = `<p style="text-align:center;color:#5B4F3E;">Impossible de charger les prestations pour le moment.</p>`;
       ctaEl.innerHTML = "";
@@ -244,6 +259,9 @@ async function loadServices() {
   }
 
   titleEl.textContent = servicesData.sectionTitle ?? "PRESTATIONS";
+  introEl.textContent =
+    servicesData.generalIntro ??
+    "Chaque projet est unique. Les prestations sont définies selon vos besoins, le contexte et l’usage des images.";
 
   function renderServices(type) {
     currentType = type;
@@ -258,17 +276,18 @@ async function loadServices() {
     tabPart.setAttribute("aria-selected", String(type === "private"));
 
     if (modeData.introEnabled && modeData.introHtml) {
-      introEl.innerHTML = modeData.introHtml;
-      introEl.hidden = false;
+      modeIntroEl.innerHTML = modeData.introHtml;
+      modeIntroEl.hidden = false;
     } else {
-      introEl.innerHTML = "";
-      introEl.hidden = true;
+      modeIntroEl.innerHTML = "";
+      modeIntroEl.hidden = true;
     }
 
-    // On garde le fonctionnement actuel :
-    // "À partir de..." affiché uniquement pour pro si présent dans le fallback JSON
-    // ou dans un éventuel enrichissement futur de l'API
-    if (type === "pro" && modeData.fromEnabled && (modeData.fromLabel || modeData.fromPrice || modeData.fromNote)) {
+    if (
+      type === "pro" &&
+      modeData.fromEnabled &&
+      (modeData.fromLabel || modeData.fromPrice || modeData.fromNote)
+    ) {
       fromEl.innerHTML = `
         <span class="services__from-label">${escapeHtml(modeData.fromLabel ?? "")}</span>
         <span class="services__from-price">${escapeHtml(modeData.fromPrice ?? "")}</span>
@@ -285,6 +304,7 @@ async function loadServices() {
     gridEl.innerHTML = cards
       .map((card) => {
         const title = card.title ?? "";
+
         const bodyHtml =
           card.bodyEnabled && card.bodyHtml
             ? `<div class="services__text">${card.bodyHtml}</div>`
@@ -327,7 +347,6 @@ async function loadServices() {
   tabPro.addEventListener("click", () => renderServices("pro"));
   tabPart.addEventListener("click", () => renderServices("private"));
 
-  // Si ton toggle actuel repose déjà sur currentType, on l'initialise ici
   renderServices(currentType);
 }
 
