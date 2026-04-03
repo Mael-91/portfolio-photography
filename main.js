@@ -2,32 +2,156 @@ async function loadAutomotiveGrid() {
   const grid = document.getElementById("autoGrid");
   if (!grid) return;
 
+  const API_URL = "https://api.maelconstantin.fr/api/portfolio-images/public";
+  const FALLBACK_JSON_URL = "./data/automotive.json";
+  const CACHE_KEY = "portfolio_images_public_cache_v1";
+
   try {
-    const res = await fetch("./data/automotive.json", { cache: "no-store" });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const items = await res.json();
+    const apiItems = await fetchPortfolioImagesFromApi(API_URL);
 
-    grid.innerHTML = items
-      .slice(0, 6)
-      .map((item) => {
-        const src = item.src ?? "";
-        const caption = item.caption ?? "";
-        const alt = item.alt ?? caption ?? "Photographie automobile";
+    if (Array.isArray(apiItems) && apiItems.length > 0) {
+      const normalizedItems = normalizePortfolioItems(apiItems);
 
-        return `
-          <figure class="auto__card">
-            <img class="auto__img" src="${src}" alt="${escapeHtml(alt)}" loading="lazy" decoding="async" />
-            <figcaption class="auto__caption">${escapeHtml(caption)}</figcaption>
-          </figure>
-        `;
+      savePortfolioCache(CACHE_KEY, normalizedItems);
+      renderAutomotiveGrid(grid, normalizedItems);
+      return;
+    }
+
+    throw new Error("API vide ou format invalide");
+  } catch (apiError) {
+    console.warn("API portfolio indisponible, tentative via cache local :", apiError);
+
+    const cachedItems = loadPortfolioCache(CACHE_KEY);
+
+    if (Array.isArray(cachedItems) && cachedItems.length > 0) {
+      renderAutomotiveGrid(grid, cachedItems);
+      return;
+    }
+
+    try {
+      const fallbackItems = await fetchFallbackJson(FALLBACK_JSON_URL);
+
+      if (Array.isArray(fallbackItems) && fallbackItems.length > 0) {
+        renderAutomotiveGrid(grid, fallbackItems);
+        return;
+      }
+
+      throw new Error("Fallback JSON vide ou invalide");
+    } catch (fallbackError) {
+      console.error("Impossible de charger la galerie :", fallbackError);
+      grid.innerHTML = `<p style="text-align:center;color:#5B4F3E;">Impossible de charger la galerie pour le moment.</p>`;
+    }
+  }
+}
+
+async function fetchPortfolioImagesFromApi(apiUrl) {
+  const res = await fetch(apiUrl, {
+    method: "GET",
+    cache: "no-store"
+  });
+
+  if (!res.ok) {
+    throw new Error(`API HTTP ${res.status}`);
+  }
+
+  return res.json();
+}
+
+async function fetchFallbackJson(jsonUrl) {
+  const res = await fetch(jsonUrl, {
+    method: "GET",
+    cache: "no-store"
+  });
+
+  if (!res.ok) {
+    throw new Error(`Fallback HTTP ${res.status}`);
+  }
+
+  return res.json();
+}
+
+function normalizePortfolioItems(items) {
+  return items
+    .map((item) => {
+      const src =
+        item.image_url ??
+        item.src ??
+        item.url ??
+        "";
+
+      const caption =
+        item.caption ??
+        item.title ??
+        "";
+
+      const alt =
+        item.alt_text ??
+        item.alt ??
+        caption ??
+        "Photographie automobile";
+
+      const displayOrder =
+        Number(item.display_order ?? 999999);
+
+      return {
+        src,
+        caption,
+        alt,
+        display_order: displayOrder
+      };
+    })
+    .filter((item) => item.src)
+    .sort((a, b) => a.display_order - b.display_order);
+}
+
+function renderAutomotiveGrid(grid, items) {
+  grid.innerHTML = items
+    .slice(0, 6)
+    .map((item) => {
+      return `
+        <figure class="auto__card">
+          <img
+            class="auto__img"
+            src="${escapeHtml(item.src)}"
+            alt="${escapeHtml(item.alt)}"
+            loading="lazy"
+            decoding="async"
+          />
+          <figcaption class="auto__caption">${escapeHtml(item.caption ?? "")}</figcaption>
+        </figure>
+      `;
+    })
+    .join("");
+
+  applyImageRatios();
+}
+
+function savePortfolioCache(key, items) {
+  try {
+    localStorage.setItem(
+      key,
+      JSON.stringify({
+        savedAt: Date.now(),
+        items
       })
-      .join("");
+    );
+  } catch (error) {
+    console.warn("Impossible de sauvegarder le cache local portfolio :", error);
+  }
+}
 
-    // ✅ IMPORTANT : appeler après injection du HTML
-    applyImageRatios();
-  } catch (e) {
-    console.error("Erreur chargement automotive.json :", e);
-    grid.innerHTML = `<p style="text-align:center;color:#5B4F3E;">Impossible de charger la galerie pour le moment.</p>`;
+function loadPortfolioCache(key) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+
+    const parsed = JSON.parse(raw);
+    if (!parsed || !Array.isArray(parsed.items)) return null;
+
+    return parsed.items;
+  } catch (error) {
+    console.warn("Impossible de lire le cache local portfolio :", error);
+    return null;
   }
 }
 
