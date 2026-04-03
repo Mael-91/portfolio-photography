@@ -73,17 +73,21 @@ async function fetchFallbackJson(jsonUrl) {
 function normalizePortfolioItems(items) {
   const ASSET_BASE_URL = "https://admin-api.maelconstantin.fr";
 
-  if (src && !src.startsWith("http://") && !src.startsWith("https://")) {
-    src = `${ASSET_BASE_URL}${src.startsWith("/") ? "" : "/"}${src}`;
-  }
-
   return items
-    .map((item) => ({
-      src: item.fileUrl ?? "",
-      caption: item.caption ?? "",
-      alt: item.altText ?? item.caption ?? "Photographie automobile",
-      display_order: Number(item.displayOrder ?? 999999)
-    }))
+    .map((item) => {
+      let src = item.fileUrl ?? item.file_url ?? item.src ?? item.url ?? "";
+
+      if (src && !src.startsWith("http://") && !src.startsWith("https://")) {
+        src = `${ASSET_BASE_URL}${src.startsWith("/") ? "" : "/"}${src}`;
+      }
+
+      return {
+        src: src,
+        caption: item.caption ?? "Photographie automobile",
+        alt: item.altText ?? item.caption ?? "Photographie automobile",
+        display_order: Number(item.displayOrder ?? 999999)
+      };
+    })
     .filter((item) => item.src)
     .sort((a, b) => a.display_order - b.display_order);
 }
