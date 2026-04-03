@@ -222,21 +222,15 @@ async function loadServices() {
       fetch(FALLBACK_JSON_URL, { cache: "no-store" })
     ]);
 
-    if (!fallbackRes.ok) {
-      throw new Error(`Fallback HTTP ${fallbackRes.status}`);
-    }
-
+    if (!fallbackRes.ok) throw new Error(`Fallback HTTP ${fallbackRes.status}`);
     const fallbackData = await fallbackRes.json();
 
-    if (!apiRes.ok) {
-      throw new Error(`API HTTP ${apiRes.status}`);
-    }
-
+    if (!apiRes.ok) throw new Error(`API HTTP ${apiRes.status}`);
     const apiData = await apiRes.json();
 
     servicesData = normalizeServicesApiData(apiData, fallbackData);
   } catch (error) {
-    console.warn("API services indisponible, fallback sur services.json :", error);
+    console.warn("API services indisponible, fallback JSON :", error);
 
     try {
       const fallbackRes = await fetch(FALLBACK_JSON_URL, { cache: "no-store" });
@@ -249,14 +243,20 @@ async function loadServices() {
 
       titleEl.textContent = "PRESTATIONS";
       introEl.textContent = "";
-      fromEl.textContent = "";
-      gridEl.innerHTML = `<p style="text-align:center;color:#5B4F3E;">Impossible de charger les prestations pour le moment.</p>`;
+      fromEl.innerHTML = "";
+      gridEl.innerHTML = `<p style="text-align:center;">Impossible de charger les prestations.</p>`;
       ctaEl.innerHTML = "";
       return;
     }
   }
 
+  // ✅ TITRE
   titleEl.textContent = servicesData.sectionTitle ?? "PRESTATIONS";
+
+  // ✅ INTRO FIXE (toujours visible au-dessus du toggle)
+  introEl.textContent =
+    servicesData.generalIntro ??
+    "Chaque projet est unique. Les prestations sont définies selon vos besoins, le contexte et l’usage des images.";
 
   function renderServices(type) {
     currentType = type;
@@ -264,36 +264,38 @@ async function loadServices() {
     const modeData = servicesData?.modes?.[type];
     if (!modeData) return;
 
+    // ✅ Toggle (inchangé)
     tabPro.classList.toggle("is-active", type === "pro");
     tabPart.classList.toggle("is-active", type === "private");
 
     tabPro.setAttribute("aria-selected", String(type === "pro"));
     tabPart.setAttribute("aria-selected", String(type === "private"));
 
-    // On garde servicesIntro à sa place actuelle.
-    if (modeData.introEnabled && modeData.introHtml) {
-      introEl.innerHTML = modeData.introHtml;
-    } else {
-      introEl.textContent = servicesData.generalIntro ?? "";
-    }
+    // ✅ TEXTE DYNAMIQUE SOUS LE TOGGLE
+    if (modeData.introEnabled) {
+      if (modeData.introHtml) {
+        fromEl.innerHTML = modeData.introHtml;
+      } else if (
+        modeData.fromLabel ||
+        modeData.fromPrice ||
+        modeData.fromNote
+      ) {
+        fromEl.innerHTML = `
+          <span class="services__from-label">${escapeHtml(modeData.fromLabel ?? "")}</span>
+          <span class="services__from-price">${escapeHtml(modeData.fromPrice ?? "")}</span>
+          <span class="services__from-note">${escapeHtml(modeData.fromNote ?? "")}</span>
+        `;
+      } else {
+        fromEl.innerHTML = "";
+      }
 
-    // On garde le "À partir de..." comme avant
-    if (
-      type === "pro" &&
-      modeData.fromEnabled &&
-      (modeData.fromLabel || modeData.fromPrice || modeData.fromNote)
-    ) {
-      fromEl.innerHTML = `
-        <span class="services__from-label">${escapeHtml(modeData.fromLabel ?? "")}</span>
-        <span class="services__from-price">${escapeHtml(modeData.fromPrice ?? "")}</span>
-        <span class="services__from-note">${escapeHtml(modeData.fromNote ?? "")}</span>
-      `;
       fromEl.hidden = false;
     } else {
       fromEl.innerHTML = "";
       fromEl.hidden = true;
     }
 
+    // ✅ CARTES
     const cards = Array.isArray(modeData.cards) ? modeData.cards : [];
 
     gridEl.innerHTML = cards
@@ -328,6 +330,7 @@ async function loadServices() {
       })
       .join("");
 
+    // ✅ CTA
     const cta = modeData.cta ?? servicesData.cta ?? {};
     const primaryText = cta.primaryText ?? "Demander un devis";
     const primaryHref = cta.primaryHref ?? "#contact";
@@ -339,10 +342,11 @@ async function loadServices() {
     `;
   }
 
-  // On garde le fonctionnement actuel du toggle
+  // ✅ Toggle listeners (inchangé)
   tabPro.addEventListener("click", () => renderServices("pro"));
   tabPart.addEventListener("click", () => renderServices("private"));
 
+  // ✅ Initial render
   renderServices(currentType);
 }
 
@@ -359,29 +363,30 @@ function normalizeServicesApiData(apiData, fallbackData) {
     modes: {
       pro: {
         introEnabled: !!apiData?.pro?.introEnabled,
-        introHtml: apiData?.pro?.introHtml ?? "",
-        fromEnabled: !!(fallbackData?.fromLabel || fallbackData?.fromPrice || fallbackData?.fromNote),
+
+        // priorité admin
+        introHtml: apiData?.pro?.introHtml ?? null,
+
+        // fallback JSON actuel
         fromLabel: fallbackData?.fromLabel ?? "",
         fromPrice: fallbackData?.fromPrice ?? "",
         fromNote: fallbackData?.fromNote ?? "",
+
         cards: normalizeServiceCards(apiData?.pro?.cards),
-        cta: fallbackData?.cta ?? {
-          primaryText: "Demander un devis",
-          primaryHref: "#contact"
-        }
+        cta: fallbackData?.cta
       },
+
       private: {
         introEnabled: !!apiData?.private?.introEnabled,
-        introHtml: apiData?.private?.introHtml ?? "",
-        fromEnabled: false,
+        introHtml: apiData?.private?.introHtml ?? null,
+
+        // pas de "à partir de" pour particulier sauf si tu veux plus tard
         fromLabel: "",
         fromPrice: "",
         fromNote: "",
+
         cards: normalizeServiceCards(apiData?.private?.cards),
-        cta: fallbackData?.cta ?? {
-          primaryText: "Demander un devis",
-          primaryHref: "#contact"
-        }
+        cta: fallbackData?.cta
       }
     }
   };
