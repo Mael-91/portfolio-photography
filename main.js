@@ -71,6 +71,12 @@ async function fetchFallbackJson(jsonUrl) {
 }
 
 function normalizePortfolioItems(items) {
+  const ASSET_BASE_URL = "https://admin-api.maelconstantin.fr";
+
+  if (src && !src.startsWith("http://") && !src.startsWith("https://")) {
+    src = `${ASSET_BASE_URL}${src.startsWith("/") ? "" : "/"}${src}`;
+  }
+
   return items
     .map((item) => ({
       src: item.fileUrl ?? "",
