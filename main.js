@@ -210,101 +210,278 @@ async function loadServices() {
 
   if (!titleEl || !introEl || !fromEl || !gridEl || !ctaEl || !tabPro || !tabPart) return;
 
+  const API_URL = "https://api.maelconstantin.fr/services";
+  const FALLBACK_JSON_URL = "./data/services.json";
+
+  let currentType = "pro";
+  let servicesData = null;
+
   try {
-    const res = await fetch("./data/services.json", { cache: "no-store" });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
+    const [apiRes, fallbackRes] = await Promise.all([
+      fetch(API_URL, { cache: "no-store" }),
+      fetch(FALLBACK_JSON_URL, { cache: "no-store" })
+    ]);
 
-    titleEl.textContent = data.sectionTitle ?? "PRESTATIONS";
-    introEl.textContent = data.intro ?? "";
+    if (!fallbackRes.ok) throw new Error(`Fallback HTTP ${fallbackRes.status}`);
+    const fallbackData = await fallbackRes.json();
 
-    let currentMode = "pro";
+    if (!apiRes.ok) throw new Error(`API HTTP ${apiRes.status}`);
+    const apiData = await apiRes.json();
 
-    function renderServices(mode) {
-      const modeData = data.modes?.[mode];
-      if (!modeData) return;
+    servicesData = normalizeServicesApiData(apiData, fallbackData);
+  } catch (error) {
+    console.warn("API services indisponible, fallback JSON :", error);
 
-      currentMode = mode;
+    try {
+      const fallbackRes = await fetch(FALLBACK_JSON_URL, { cache: "no-store" });
+      if (!fallbackRes.ok) throw new Error(`Fallback HTTP ${fallbackRes.status}`);
+      const fallbackData = await fallbackRes.json();
 
-      // Toggle boutons
-      tabPro.classList.toggle("is-active", mode === "pro");
-      tabPart.classList.toggle("is-active", mode === "part");
-      tabPro.setAttribute("aria-selected", String(mode === "pro"));
-      tabPart.setAttribute("aria-selected", String(mode === "part"));
+      servicesData = normalizeFallbackServicesData(fallbackData);
+    } catch (fallbackError) {
+      console.error("Impossible de charger les services :", fallbackError);
 
-      // Affichage du "À partir de..." uniquement pour pro
-      if (mode === "pro") {
-        const fromLabel = modeData.fromLabel ?? "À partir de";
-        const fromPrice = modeData.fromPrice ?? "";
-        const fromNote = modeData.fromNote ?? "";
+      titleEl.textContent = "PRESTATIONS";
+      introEl.textContent = "";
+      fromEl.innerHTML = "";
+      gridEl.innerHTML = `<p style="text-align:center;">Impossible de charger les prestations.</p>`;
+      ctaEl.innerHTML = "";
+      return;
+    }
+  }
 
+  // ✅ TITRE
+  titleEl.textContent = servicesData.sectionTitle ?? "PRESTATIONS";
+
+  // ✅ INTRO FIXE (toujours visible au-dessus du toggle)
+  introEl.textContent =
+    servicesData.generalIntro ??
+    "Chaque projet est unique. Les prestations sont définies selon vos besoins, le contexte et l’usage des images.";
+
+  function renderServices(type) {
+    currentType = type;
+
+    const modeData = servicesData?.modes?.[type];
+    if (!modeData) return;
+
+    // ✅ Toggle (inchangé)
+    tabPro.classList.toggle("is-active", type === "pro");
+    tabPart.classList.toggle("is-active", type === "private");
+
+    tabPro.setAttribute("aria-selected", String(type === "pro"));
+    tabPart.setAttribute("aria-selected", String(type === "private"));
+
+    // ✅ TEXTE DYNAMIQUE SOUS LE TOGGLE
+    if (modeData.introEnabled) {
+      if (modeData.introHtml) {
+        fromEl.innerHTML = modeData.introHtml;
+      } else if (
+        modeData.fromLabel ||
+        modeData.fromPrice ||
+        modeData.fromNote
+      ) {
         fromEl.innerHTML = `
-          <span class="services__from-label">${escapeHtml(fromLabel)}</span>
-          <span class="services__from-price">${escapeHtml(fromPrice)}</span>
-          <span class="services__from-note">${escapeHtml(fromNote)}</span>
+          <span class="services__from-label">${escapeHtml(modeData.fromLabel ?? "")}</span>
+          <span class="services__from-price">${escapeHtml(modeData.fromPrice ?? "")}</span>
+          <span class="services__from-note">${escapeHtml(modeData.fromNote ?? "")}</span>
         `;
-        fromEl.hidden = false;
       } else {
         fromEl.innerHTML = "";
-        fromEl.hidden = true;
       }
 
-      // Cards
-      const cards = Array.isArray(modeData.cards) ? modeData.cards : [];
-      gridEl.innerHTML = cards
-        .map((card) => {
-          const title = card.title ?? "";
-          const type = card.type ?? "list";
-          const text = card.text ?? "";
-          const items = Array.isArray(card.items) ? card.items : [];
-          const price = card.price ?? "";
-
-          const listHtml = items.length
-            ? `<ul class="services__list">${items.map((li) => `<li>${escapeHtml(li)}</li>`).join("")}</ul>`
-            : "";
-
-          const textHtml = text
-            ? `<p class="services__text">${escapeHtml(text)}</p>`
-            : "";
-
-          const priceHtml = price
-            ? `<p class="services__price">${escapeHtml(price)}</p>`
-            : "";
-
-          return `
-            <article class="services__card">
-              <h3 class="services__card-title">${escapeHtml(title)}</h3>
-              ${type === "mixed" ? `${textHtml}${listHtml}` : type === "text" ? textHtml : listHtml}
-              ${priceHtml}
-            </article>
-          `;
-        })
-        .join("");
-
-      // CTA
-      const cta = modeData.cta ?? {};
-      const primaryText = cta.primaryText ?? "Demander un devis";
-      const primaryHref = cta.primaryHref ?? "#contact";
-
-      ctaEl.innerHTML = `
-        <a class="services__btn services__btn--primary" href="${escapeHtml(primaryHref)}">
-          ${escapeHtml(primaryText)}
-        </a>
-      `;
+      fromEl.hidden = false;
+    } else {
+      fromEl.innerHTML = "";
+      fromEl.hidden = true;
     }
 
-    tabPro.addEventListener("click", () => renderServices("pro"));
-    tabPart.addEventListener("click", () => renderServices("part"));
+    // ✅ CARTES
+    const cards = Array.isArray(modeData.cards) ? modeData.cards : [];
 
-    renderServices("pro");
-  } catch (e) {
-    console.error("Erreur chargement services.json :", e);
-    titleEl.textContent = "PRESTATIONS";
-    introEl.textContent = "";
-    fromEl.textContent = "";
-    gridEl.innerHTML = `<p style="text-align:center;color:#5B4F3E;">Impossible de charger les prestations pour le moment.</p>`;
-    ctaEl.innerHTML = "";
+    gridEl.innerHTML = cards
+      .map((card) => {
+        const title = card.title ?? "";
+
+        const bodyHtml =
+          card.bodyEnabled && card.bodyHtml
+            ? `<div class="services__text">${card.bodyHtml}</div>`
+            : "";
+
+        const bulletsHtml =
+          card.bulletsEnabled && Array.isArray(card.bullets) && card.bullets.length
+            ? `<ul class="services__list">${card.bullets
+                .map((li) => `<li>${escapeHtml(li)}</li>`)
+                .join("")}</ul>`
+            : "";
+
+        const priceHtml =
+          card.priceEnabled && card.priceLabel
+            ? `<p class="services__price">${escapeHtml(card.priceLabel)}</p>`
+            : "";
+
+        return `
+          <article class="services__card">
+            <h3 class="services__card-title">${escapeHtml(title)}</h3>
+            ${bodyHtml}
+            ${bulletsHtml}
+            ${priceHtml}
+          </article>
+        `;
+      })
+      .join("");
+
+    // ✅ CTA
+    const cta = modeData.cta ?? servicesData.cta ?? {};
+    const primaryText = cta.primaryText ?? "Demander un devis";
+    const primaryHref = cta.primaryHref ?? "#contact";
+
+    ctaEl.innerHTML = `
+      <a class="services__btn services__btn--primary" href="${escapeHtml(primaryHref)}">
+        ${escapeHtml(primaryText)}
+      </a>
+    `;
   }
+
+  // ✅ Toggle listeners (inchangé)
+  tabPro.addEventListener("click", () => renderServices("pro"));
+  tabPart.addEventListener("click", () => renderServices("private"));
+
+  // ✅ Initial render
+  renderServices(currentType);
+}
+
+function normalizeServicesApiData(apiData, fallbackData) {
+  return {
+    sectionTitle: fallbackData?.sectionTitle ?? "PRESTATIONS",
+    generalIntro:
+      fallbackData?.intro ??
+      "Chaque projet est unique. Les prestations sont définies selon vos besoins, le contexte et l’usage des images.",
+    cta: fallbackData?.cta ?? {
+      primaryText: "Demander un devis",
+      primaryHref: "#contact"
+    },
+    modes: {
+      pro: {
+        introEnabled: !!apiData?.pro?.introEnabled,
+
+        // priorité admin
+        introHtml: apiData?.pro?.introHtml ?? null,
+
+        // fallback JSON actuel
+        fromLabel: fallbackData?.fromLabel ?? "",
+        fromPrice: fallbackData?.fromPrice ?? "",
+        fromNote: fallbackData?.fromNote ?? "",
+
+        cards: normalizeServiceCards(apiData?.pro?.cards),
+        cta: fallbackData?.cta
+      },
+
+      private: {
+        introEnabled: !!apiData?.private?.introEnabled,
+        introHtml: apiData?.private?.introHtml ?? null,
+
+        // pas de "à partir de" pour particulier sauf si tu veux plus tard
+        fromLabel: "",
+        fromPrice: "",
+        fromNote: "",
+
+        cards: normalizeServiceCards(apiData?.private?.cards),
+        cta: fallbackData?.cta
+      }
+    }
+  };
+}
+
+function normalizeServiceCards(cards) {
+  if (!Array.isArray(cards)) return [];
+
+  return cards.map((card) => ({
+    id: card.id ?? null,
+    title: card.title ?? "",
+    bodyEnabled: !!card.bodyEnabled,
+    bodyHtml: card.bodyHtml ?? "",
+    bulletsEnabled: !!card.bulletsEnabled,
+    bullets: Array.isArray(card.bullets) ? card.bullets : [],
+    priceEnabled: !!card.priceEnabled,
+    priceLabel: card.priceLabel ?? null
+  }));
+}
+
+// Compatibilité avec ton ancien services.json actuel
+function normalizeFallbackServicesData(fallbackData) {
+  const proCards = Array.isArray(fallbackData?.modes?.pro?.cards)
+    ? fallbackData.modes.pro.cards
+    : Array.isArray(fallbackData?.cards)
+      ? fallbackData.cards
+      : [];
+
+  const privateCards = Array.isArray(fallbackData?.modes?.private?.cards)
+    ? fallbackData.modes.private.cards
+    : [];
+
+  return {
+    sectionTitle: fallbackData?.sectionTitle ?? "PRESTATIONS",
+    generalIntro:
+      fallbackData?.intro ??
+      "Chaque projet est unique. Les prestations sont définies selon vos besoins, le contexte et l’usage des images.",
+    cta: fallbackData?.cta ?? {
+      primaryText: "Demander un devis",
+      primaryHref: "#contact"
+    },
+    modes: {
+      pro: {
+        introEnabled: false,
+        introHtml: "",
+        fromEnabled: !!(fallbackData?.fromLabel || fallbackData?.fromPrice || fallbackData?.fromNote),
+        fromLabel: fallbackData?.fromLabel ?? "",
+        fromPrice: fallbackData?.fromPrice ?? "",
+        fromNote: fallbackData?.fromNote ?? "",
+        cards: normalizeFallbackCards(proCards),
+        cta: fallbackData?.cta ?? {
+          primaryText: "Demander un devis",
+          primaryHref: "#contact"
+        }
+      },
+      private: {
+        introEnabled: false,
+        introHtml: "",
+        fromEnabled: false,
+        fromLabel: "",
+        fromPrice: "",
+        fromNote: "",
+        cards: normalizeFallbackCards(privateCards),
+        cta: fallbackData?.cta ?? {
+          primaryText: "Demander un devis",
+          primaryHref: "#contact"
+        }
+      }
+    }
+  };
+}
+
+function normalizeFallbackCards(cards) {
+  return cards.map((card) => ({
+    id: card.id ?? null,
+    title: card.title ?? "",
+    bodyEnabled: card.type === "text" || card.type === "mixed",
+    bodyHtml:
+      card.text && (card.type === "text" || card.type === "mixed")
+        ? `<p>${escapeHtml(card.text)}</p>`
+        : "",
+    bulletsEnabled: card.type === "list" || card.type === "mixed",
+    bullets: Array.isArray(card.items) ? card.items : [],
+    priceEnabled: !!card.price,
+    priceLabel: card.price ?? null
+  }));
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 let footerLoading = false;
