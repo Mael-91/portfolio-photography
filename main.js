@@ -2,7 +2,7 @@ async function loadAutomotiveGrid() {
   const grid = document.getElementById("autoGrid");
   if (!grid) return;
 
-  const API_URL = "https://api.maelconstantin.fr/api/portfolio-images/public";
+  const API_URL = "https://api.maelconstantin.fr/api/portfolio-images";
   const FALLBACK_JSON_URL = "./data/automotive.json";
   const CACHE_KEY = "portfolio_images_public_cache_v1";
 
