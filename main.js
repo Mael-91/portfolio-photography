@@ -210,101 +210,257 @@ async function loadServices() {
 
   if (!titleEl || !introEl || !fromEl || !gridEl || !ctaEl || !tabPro || !tabPart) return;
 
+  const API_URL = "https://api.maelconstantin.fr/services";
+  const FALLBACK_JSON_URL = "./data/services.json";
+
+  let currentType = "pro";
+  let servicesData = null;
+
   try {
-    const res = await fetch("./data/services.json", { cache: "no-store" });
+    const res = await fetch(API_URL, { cache: "no-store" });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
+    const apiData = await res.json();
 
-    titleEl.textContent = data.sectionTitle ?? "PRESTATIONS";
-    introEl.textContent = data.intro ?? "";
+    servicesData = normalizeServicesApiData(apiData);
+  } catch (error) {
+    console.warn("API services indisponible, fallback sur services.json :", error);
 
-    let currentMode = "pro";
+    try {
+      const fallbackRes = await fetch(FALLBACK_JSON_URL, { cache: "no-store" });
+      if (!fallbackRes.ok) throw new Error(`HTTP ${fallbackRes.status}`);
+      const fallbackData = await fallbackRes.json();
 
-    function renderServices(mode) {
-      const modeData = data.modes?.[mode];
-      if (!modeData) return;
+      servicesData = normalizeFallbackServicesData(fallbackData);
+    } catch (fallbackError) {
+      console.error("Impossible de charger les services :", fallbackError);
 
-      currentMode = mode;
+      titleEl.textContent = "PRESTATIONS";
+      introEl.textContent = "";
+      fromEl.textContent = "";
+      gridEl.innerHTML = `<p style="text-align:center;color:#5B4F3E;">Impossible de charger les prestations pour le moment.</p>`;
+      ctaEl.innerHTML = "";
+      return;
+    }
+  }
 
-      // Toggle boutons
-      tabPro.classList.toggle("is-active", mode === "pro");
-      tabPart.classList.toggle("is-active", mode === "part");
-      tabPro.setAttribute("aria-selected", String(mode === "pro"));
-      tabPart.setAttribute("aria-selected", String(mode === "part"));
+  titleEl.textContent = servicesData.sectionTitle ?? "PRESTATIONS";
 
-      // Affichage du "À partir de..." uniquement pour pro
-      if (mode === "pro") {
-        const fromLabel = modeData.fromLabel ?? "À partir de";
-        const fromPrice = modeData.fromPrice ?? "";
-        const fromNote = modeData.fromNote ?? "";
+  function renderServices(type) {
+    currentType = type;
 
-        fromEl.innerHTML = `
-          <span class="services__from-label">${escapeHtml(fromLabel)}</span>
-          <span class="services__from-price">${escapeHtml(fromPrice)}</span>
-          <span class="services__from-note">${escapeHtml(fromNote)}</span>
-        `;
-        fromEl.hidden = false;
-      } else {
-        fromEl.innerHTML = "";
-        fromEl.hidden = true;
-      }
+    const modeData = servicesData?.modes?.[type];
+    if (!modeData) return;
 
-      // Cards
-      const cards = Array.isArray(modeData.cards) ? modeData.cards : [];
-      gridEl.innerHTML = cards
-        .map((card) => {
-          const title = card.title ?? "";
-          const type = card.type ?? "list";
-          const text = card.text ?? "";
-          const items = Array.isArray(card.items) ? card.items : [];
-          const price = card.price ?? "";
+    tabPro.classList.toggle("is-active", type === "pro");
+    tabPart.classList.toggle("is-active", type === "private");
 
-          const listHtml = items.length
-            ? `<ul class="services__list">${items.map((li) => `<li>${escapeHtml(li)}</li>`).join("")}</ul>`
-            : "";
+    tabPro.setAttribute("aria-selected", String(type === "pro"));
+    tabPart.setAttribute("aria-selected", String(type === "private"));
 
-          const textHtml = text
-            ? `<p class="services__text">${escapeHtml(text)}</p>`
-            : "";
-
-          const priceHtml = price
-            ? `<p class="services__price">${escapeHtml(price)}</p>`
-            : "";
-
-          return `
-            <article class="services__card">
-              <h3 class="services__card-title">${escapeHtml(title)}</h3>
-              ${type === "mixed" ? `${textHtml}${listHtml}` : type === "text" ? textHtml : listHtml}
-              ${priceHtml}
-            </article>
-          `;
-        })
-        .join("");
-
-      // CTA
-      const cta = modeData.cta ?? {};
-      const primaryText = cta.primaryText ?? "Demander un devis";
-      const primaryHref = cta.primaryHref ?? "#contact";
-
-      ctaEl.innerHTML = `
-        <a class="services__btn services__btn--primary" href="${escapeHtml(primaryHref)}">
-          ${escapeHtml(primaryText)}
-        </a>
-      `;
+    if (modeData.introEnabled && modeData.introHtml) {
+      introEl.innerHTML = modeData.introHtml;
+      introEl.hidden = false;
+    } else {
+      introEl.innerHTML = "";
+      introEl.hidden = true;
     }
 
-    tabPro.addEventListener("click", () => renderServices("pro"));
-    tabPart.addEventListener("click", () => renderServices("part"));
+    // On garde le fonctionnement actuel :
+    // "À partir de..." affiché uniquement pour pro si présent dans le fallback JSON
+    // ou dans un éventuel enrichissement futur de l'API
+    if (type === "pro" && modeData.fromEnabled && (modeData.fromLabel || modeData.fromPrice || modeData.fromNote)) {
+      fromEl.innerHTML = `
+        <span class="services__from-label">${escapeHtml(modeData.fromLabel ?? "")}</span>
+        <span class="services__from-price">${escapeHtml(modeData.fromPrice ?? "")}</span>
+        <span class="services__from-note">${escapeHtml(modeData.fromNote ?? "")}</span>
+      `;
+      fromEl.hidden = false;
+    } else {
+      fromEl.innerHTML = "";
+      fromEl.hidden = true;
+    }
 
-    renderServices("pro");
-  } catch (e) {
-    console.error("Erreur chargement services.json :", e);
-    titleEl.textContent = "PRESTATIONS";
-    introEl.textContent = "";
-    fromEl.textContent = "";
-    gridEl.innerHTML = `<p style="text-align:center;color:#5B4F3E;">Impossible de charger les prestations pour le moment.</p>`;
-    ctaEl.innerHTML = "";
+    const cards = Array.isArray(modeData.cards) ? modeData.cards : [];
+
+    gridEl.innerHTML = cards
+      .map((card) => {
+        const title = card.title ?? "";
+        const bodyHtml =
+          card.bodyEnabled && card.bodyHtml
+            ? `<div class="services__text">${card.bodyHtml}</div>`
+            : "";
+
+        const bulletsHtml =
+          card.bulletsEnabled && Array.isArray(card.bullets) && card.bullets.length
+            ? `<ul class="services__list">${card.bullets
+                .map((li) => `<li>${escapeHtml(li)}</li>`)
+                .join("")}</ul>`
+            : "";
+
+        const priceHtml =
+          card.priceEnabled && card.priceLabel
+            ? `<p class="services__price">${escapeHtml(card.priceLabel)}</p>`
+            : "";
+
+        return `
+          <article class="services__card">
+            <h3 class="services__card-title">${escapeHtml(title)}</h3>
+            ${bodyHtml}
+            ${bulletsHtml}
+            ${priceHtml}
+          </article>
+        `;
+      })
+      .join("");
+
+    const cta = modeData.cta ?? servicesData.cta ?? {};
+    const primaryText = cta.primaryText ?? "Demander un devis";
+    const primaryHref = cta.primaryHref ?? "#contact";
+
+    ctaEl.innerHTML = `
+      <a class="services__btn services__btn--primary" href="${escapeHtml(primaryHref)}">
+        ${escapeHtml(primaryText)}
+      </a>
+    `;
   }
+
+  tabPro.addEventListener("click", () => renderServices("pro"));
+  tabPart.addEventListener("click", () => renderServices("private"));
+
+  // Si ton toggle actuel repose déjà sur currentType, on l'initialise ici
+  renderServices(currentType);
+}
+
+function normalizeServicesApiData(apiData) {
+  return {
+    sectionTitle: "PRESTATIONS",
+    cta: {
+      primaryText: "Demander un devis",
+      primaryHref: "#contact"
+    },
+    modes: {
+      pro: {
+        introEnabled: !!apiData?.pro?.introEnabled,
+        introHtml: apiData?.pro?.introHtml ?? "",
+        fromEnabled: false,
+        fromLabel: "",
+        fromPrice: "",
+        fromNote: "",
+        cards: normalizeServiceCards(apiData?.pro?.cards),
+        cta: {
+          primaryText: "Demander un devis",
+          primaryHref: "#contact"
+        }
+      },
+      private: {
+        introEnabled: !!apiData?.private?.introEnabled,
+        introHtml: apiData?.private?.introHtml ?? "",
+        fromEnabled: false,
+        fromLabel: "",
+        fromPrice: "",
+        fromNote: "",
+        cards: normalizeServiceCards(apiData?.private?.cards),
+        cta: {
+          primaryText: "Demander un devis",
+          primaryHref: "#contact"
+        }
+      }
+    }
+  };
+}
+
+function normalizeServiceCards(cards) {
+  if (!Array.isArray(cards)) return [];
+
+  return cards.map((card) => ({
+    id: card.id ?? null,
+    title: card.title ?? "",
+    bodyEnabled: !!card.bodyEnabled,
+    bodyHtml: card.bodyHtml ?? "",
+    bulletsEnabled: !!card.bulletsEnabled,
+    bullets: Array.isArray(card.bullets) ? card.bullets : [],
+    priceEnabled: !!card.priceEnabled,
+    priceLabel: card.priceLabel ?? null
+  }));
+}
+
+// Compatibilité avec ton ancien services.json actuel
+function normalizeFallbackServicesData(fallbackData) {
+  const proCards = Array.isArray(fallbackData?.modes?.pro?.cards)
+    ? fallbackData.modes.pro.cards
+    : Array.isArray(fallbackData?.cards)
+      ? fallbackData.cards
+      : [];
+
+  const privateCards = Array.isArray(fallbackData?.modes?.private?.cards)
+    ? fallbackData.modes.private.cards
+    : [];
+
+  return {
+    sectionTitle: fallbackData?.sectionTitle ?? "PRESTATIONS",
+    cta: fallbackData?.cta ?? {
+      primaryText: "Demander un devis",
+      primaryHref: "#contact"
+    },
+    modes: {
+      pro: {
+        introEnabled:
+          typeof fallbackData?.modes?.pro?.introEnabled === "boolean"
+            ? fallbackData.modes.pro.introEnabled
+            : !!fallbackData?.intro,
+        introHtml:
+          fallbackData?.modes?.pro?.introHtml ??
+          (fallbackData?.intro ? `<p>${escapeHtml(fallbackData.intro)}</p>` : ""),
+        fromEnabled: !!(fallbackData?.fromLabel || fallbackData?.fromPrice || fallbackData?.fromNote),
+        fromLabel: fallbackData?.fromLabel ?? "",
+        fromPrice: fallbackData?.fromPrice ?? "",
+        fromNote: fallbackData?.fromNote ?? "",
+        cards: normalizeFallbackCards(proCards),
+        cta: fallbackData?.modes?.pro?.cta ?? fallbackData?.cta ?? {
+          primaryText: "Demander un devis",
+          primaryHref: "#contact"
+        }
+      },
+      private: {
+        introEnabled: !!fallbackData?.modes?.private?.introEnabled,
+        introHtml: fallbackData?.modes?.private?.introHtml ?? "",
+        fromEnabled: false,
+        fromLabel: "",
+        fromPrice: "",
+        fromNote: "",
+        cards: normalizeFallbackCards(privateCards),
+        cta: fallbackData?.modes?.private?.cta ?? fallbackData?.cta ?? {
+          primaryText: "Demander un devis",
+          primaryHref: "#contact"
+        }
+      }
+    }
+  };
+}
+
+function normalizeFallbackCards(cards) {
+  return cards.map((card) => ({
+    id: card.id ?? null,
+    title: card.title ?? "",
+    bodyEnabled: card.type === "text" || card.type === "mixed",
+    bodyHtml:
+      card.text && (card.type === "text" || card.type === "mixed")
+        ? `<p>${escapeHtml(card.text)}</p>`
+        : "",
+    bulletsEnabled: card.type === "list" || card.type === "mixed",
+    bullets: Array.isArray(card.items) ? card.items : [],
+    priceEnabled: !!card.price,
+    priceLabel: card.price ?? null
+  }));
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 let footerLoading = false;
