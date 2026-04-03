@@ -202,23 +202,13 @@ document.addEventListener("drop", (e) => {
 async function loadServices() {
   const titleEl = document.getElementById("servicesTitle");
   const introEl = document.getElementById("servicesIntro");
-  const modeIntroEl = document.getElementById("servicesModeIntro");
   const fromEl = document.getElementById("servicesFrom");
   const gridEl = document.getElementById("servicesGrid");
   const ctaEl = document.getElementById("servicesCta");
   const tabPro = document.getElementById("servicesTabPro");
   const tabPart = document.getElementById("servicesTabPart");
 
-  if (
-    !titleEl ||
-    !introEl ||
-    !modeIntroEl ||
-    !fromEl ||
-    !gridEl ||
-    !ctaEl ||
-    !tabPro ||
-    !tabPart
-  ) return;
+  if (!titleEl || !introEl || !fromEl || !gridEl || !ctaEl || !tabPro || !tabPart) return;
 
   const API_URL = "https://api.maelconstantin.fr/services";
   const FALLBACK_JSON_URL = "./data/services.json";
@@ -227,13 +217,22 @@ async function loadServices() {
   let servicesData = null;
 
   try {
-    const res = await fetch(API_URL, { cache: "no-store" });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const apiData = await res.json();
+    const [apiRes, fallbackRes] = await Promise.all([
+      fetch(API_URL, { cache: "no-store" }),
+      fetch(FALLBACK_JSON_URL, { cache: "no-store" })
+    ]);
 
-    const fallbackRes = await fetch(FALLBACK_JSON_URL, { cache: "no-store" });
-    if (!fallbackRes.ok) throw new Error(`HTTP ${fallbackRes.status}`);
+    if (!fallbackRes.ok) {
+      throw new Error(`Fallback HTTP ${fallbackRes.status}`);
+    }
+
     const fallbackData = await fallbackRes.json();
+
+    if (!apiRes.ok) {
+      throw new Error(`API HTTP ${apiRes.status}`);
+    }
+
+    const apiData = await apiRes.json();
 
     servicesData = normalizeServicesApiData(apiData, fallbackData);
   } catch (error) {
@@ -241,7 +240,7 @@ async function loadServices() {
 
     try {
       const fallbackRes = await fetch(FALLBACK_JSON_URL, { cache: "no-store" });
-      if (!fallbackRes.ok) throw new Error(`HTTP ${fallbackRes.status}`);
+      if (!fallbackRes.ok) throw new Error(`Fallback HTTP ${fallbackRes.status}`);
       const fallbackData = await fallbackRes.json();
 
       servicesData = normalizeFallbackServicesData(fallbackData);
@@ -250,7 +249,6 @@ async function loadServices() {
 
       titleEl.textContent = "PRESTATIONS";
       introEl.textContent = "";
-      modeIntroEl.innerHTML = "";
       fromEl.textContent = "";
       gridEl.innerHTML = `<p style="text-align:center;color:#5B4F3E;">Impossible de charger les prestations pour le moment.</p>`;
       ctaEl.innerHTML = "";
@@ -259,9 +257,6 @@ async function loadServices() {
   }
 
   titleEl.textContent = servicesData.sectionTitle ?? "PRESTATIONS";
-  introEl.textContent =
-    servicesData.generalIntro ??
-    "Chaque projet est unique. Les prestations sont définies selon vos besoins, le contexte et l’usage des images.";
 
   function renderServices(type) {
     currentType = type;
@@ -275,14 +270,14 @@ async function loadServices() {
     tabPro.setAttribute("aria-selected", String(type === "pro"));
     tabPart.setAttribute("aria-selected", String(type === "private"));
 
+    // On garde servicesIntro à sa place actuelle.
     if (modeData.introEnabled && modeData.introHtml) {
-      modeIntroEl.innerHTML = modeData.introHtml;
-      modeIntroEl.hidden = false;
+      introEl.innerHTML = modeData.introHtml;
     } else {
-      modeIntroEl.innerHTML = "";
-      modeIntroEl.hidden = true;
+      introEl.textContent = servicesData.generalIntro ?? "";
     }
 
+    // On garde le "À partir de..." comme avant
     if (
       type === "pro" &&
       modeData.fromEnabled &&
@@ -344,16 +339,20 @@ async function loadServices() {
     `;
   }
 
+  // On garde le fonctionnement actuel du toggle
   tabPro.addEventListener("click", () => renderServices("pro"));
   tabPart.addEventListener("click", () => renderServices("private"));
 
   renderServices(currentType);
 }
 
-function normalizeServicesApiData(apiData) {
+function normalizeServicesApiData(apiData, fallbackData) {
   return {
-    sectionTitle: "PRESTATIONS",
-    cta: {
+    sectionTitle: fallbackData?.sectionTitle ?? "PRESTATIONS",
+    generalIntro:
+      fallbackData?.intro ??
+      "Chaque projet est unique. Les prestations sont définies selon vos besoins, le contexte et l’usage des images.",
+    cta: fallbackData?.cta ?? {
       primaryText: "Demander un devis",
       primaryHref: "#contact"
     },
@@ -361,12 +360,12 @@ function normalizeServicesApiData(apiData) {
       pro: {
         introEnabled: !!apiData?.pro?.introEnabled,
         introHtml: apiData?.pro?.introHtml ?? "",
-        fromEnabled: false,
-        fromLabel: "",
-        fromPrice: "",
-        fromNote: "",
+        fromEnabled: !!(fallbackData?.fromLabel || fallbackData?.fromPrice || fallbackData?.fromNote),
+        fromLabel: fallbackData?.fromLabel ?? "",
+        fromPrice: fallbackData?.fromPrice ?? "",
+        fromNote: fallbackData?.fromNote ?? "",
         cards: normalizeServiceCards(apiData?.pro?.cards),
-        cta: {
+        cta: fallbackData?.cta ?? {
           primaryText: "Demander un devis",
           primaryHref: "#contact"
         }
@@ -379,7 +378,7 @@ function normalizeServicesApiData(apiData) {
         fromPrice: "",
         fromNote: "",
         cards: normalizeServiceCards(apiData?.private?.cards),
-        cta: {
+        cta: fallbackData?.cta ?? {
           primaryText: "Demander un devis",
           primaryHref: "#contact"
         }
@@ -417,38 +416,36 @@ function normalizeFallbackServicesData(fallbackData) {
 
   return {
     sectionTitle: fallbackData?.sectionTitle ?? "PRESTATIONS",
+    generalIntro:
+      fallbackData?.intro ??
+      "Chaque projet est unique. Les prestations sont définies selon vos besoins, le contexte et l’usage des images.",
     cta: fallbackData?.cta ?? {
       primaryText: "Demander un devis",
       primaryHref: "#contact"
     },
     modes: {
       pro: {
-        introEnabled:
-          typeof fallbackData?.modes?.pro?.introEnabled === "boolean"
-            ? fallbackData.modes.pro.introEnabled
-            : !!fallbackData?.intro,
-        introHtml:
-          fallbackData?.modes?.pro?.introHtml ??
-          (fallbackData?.intro ? `<p>${escapeHtml(fallbackData.intro)}</p>` : ""),
+        introEnabled: false,
+        introHtml: "",
         fromEnabled: !!(fallbackData?.fromLabel || fallbackData?.fromPrice || fallbackData?.fromNote),
         fromLabel: fallbackData?.fromLabel ?? "",
         fromPrice: fallbackData?.fromPrice ?? "",
         fromNote: fallbackData?.fromNote ?? "",
         cards: normalizeFallbackCards(proCards),
-        cta: fallbackData?.modes?.pro?.cta ?? fallbackData?.cta ?? {
+        cta: fallbackData?.cta ?? {
           primaryText: "Demander un devis",
           primaryHref: "#contact"
         }
       },
       private: {
-        introEnabled: !!fallbackData?.modes?.private?.introEnabled,
-        introHtml: fallbackData?.modes?.private?.introHtml ?? "",
+        introEnabled: false,
+        introHtml: "",
         fromEnabled: false,
         fromLabel: "",
         fromPrice: "",
         fromNote: "",
         cards: normalizeFallbackCards(privateCards),
-        cta: fallbackData?.modes?.private?.cta ?? fallbackData?.cta ?? {
+        cta: fallbackData?.cta ?? {
           primaryText: "Demander un devis",
           primaryHref: "#contact"
         }
