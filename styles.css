@@ -632,6 +632,14 @@ body {
   font-size: 15px;
 }
 
+.services__text > *:first-child {
+  margin-top: 0;
+}
+
+.services__text > *:last-child {
+  margin-bottom: 0;
+}
+
 .services__price {
   margin-top: auto;
   padding-top: 18px;
