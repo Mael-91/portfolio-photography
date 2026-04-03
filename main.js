@@ -72,34 +72,12 @@ async function fetchFallbackJson(jsonUrl) {
 
 function normalizePortfolioItems(items) {
   return items
-    .map((item) => {
-      const src =
-        item.image_url ??
-        item.src ??
-        item.url ??
-        "";
-
-      const caption =
-        item.caption ??
-        item.title ??
-        "";
-
-      const alt =
-        item.alt_text ??
-        item.alt ??
-        caption ??
-        "Photographie automobile";
-
-      const displayOrder =
-        Number(item.display_order ?? 999999);
-
-      return {
-        src,
-        caption,
-        alt,
-        display_order: displayOrder
-      };
-    })
+    .map((item) => ({
+      src: item.fileUrl ?? "",
+      caption: item.caption ?? "",
+      alt: item.altText ?? item.caption ?? "Photographie automobile",
+      display_order: Number(item.displayOrder ?? 999999)
+    }))
     .filter((item) => item.src)
     .sort((a, b) => a.display_order - b.display_order);
 }
