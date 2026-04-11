@@ -577,24 +577,24 @@ function normalizeFallbackAboutData(data) {
 
 function normalizeAboutData(data, baseUrl) {
   let imageUrl = data.imageUrl ?? "";
-  const paragraphs = Array.isArray(data.paragraphs) ? data.paragraphs : [];
 
   if (imageUrl && !imageUrl.startsWith("http")) {
     imageUrl = `${baseUrl}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
   }
 
   return {
-    textHtml: paragraphs.length
-      ? paragraphs.map((p) => `<p>${escapeHtml(p)}</p>`).join("")
-      : "",
+    textHtml: data.textHtml ?? "",
     imageUrl,
     imageAlt: data.imageAlt ?? "Photo de présentation"
   };
 }
 
 function normalizeFallbackAboutData(data) {
+  const paragraphs = Array.isArray(data.paragraphs) ? data.paragraphs : [];
   return {
-    textHtml: data.textHtml ?? data.text ?? "",
+    textHtml: paragraphs.length
+      ? paragraphs.map((p) => `<p>${escapeHtml(p)}</p>`).join("")
+      : "",
     imageUrl: "",
     imageAlt: data.imageAlt ?? "Photo de présentation"
   };
