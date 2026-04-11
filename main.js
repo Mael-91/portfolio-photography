@@ -516,23 +516,97 @@ async function loadFooter() {
 }
 
 async function loadAbout() {
+  const photoContainer = document.querySelector(".about__photo");
   const textEl = document.getElementById("aboutText");
-  if (!textEl) return;
+
+  if (!photoContainer || !textEl) return;
+
+  const API_URL = "https://api.maelconstantin.fr/about";
+  const FALLBACK_JSON_URL = "./data/about.json";
+  const IMAGE_BASE_URL = "https://admin-api.maelconstantin.fr";
+  const FALLBACK_IMAGE = "./assets/portrait.jpg";
 
   try {
-    const res = await fetch("./data/about.json", { cache: "no-store" });
+    const res = await fetch(API_URL, { cache: "no-store" });
+
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
     const data = await res.json();
 
-    const paragraphs = Array.isArray(data.paragraphs) ? data.paragraphs : [];
+    if (!data || (!data.textHtml && !data.imageUrl)) {
+      throw new Error("Données API invalides");
+    }
 
-    textEl.innerHTML = paragraphs
-      .map(p => `<p>${escapeHtml(p)}</p>`)
-      .join("");
+    const normalized = normalizeAboutData(data, IMAGE_BASE_URL);
 
-  } catch (err) {
-    console.error("Erreur chargement about.json :", err);
+    renderAbout(photoContainer, textEl, normalized, FALLBACK_IMAGE);
+
+  } catch (apiError) {
+    console.warn("API about indisponible :", apiError);
+
+    // 🔹 fallback texte uniquement
+    try {
+      const fallbackRes = await fetch(FALLBACK_JSON_URL, { cache: "no-store" });
+      if (!fallbackRes.ok) throw new Error(`HTTP ${fallbackRes.status}`);
+
+      const fallbackData = await fallbackRes.json();
+      const normalized = normalizeFallbackAboutData(fallbackData);
+
+      renderAbout(photoContainer, textEl, normalized, FALLBACK_IMAGE);
+
+    } catch (fallbackError) {
+      console.error("Fallback about KO :", fallbackError);
+
+      textEl.innerHTML = `<p>Impossible de charger la présentation.</p>`;
+
+      // 🔹 image fallback quand même
+      photoContainer.style.backgroundImage = `url("${FALLBACK_IMAGE}")`;
+      photoContainer.setAttribute("role", "img");
+      photoContainer.setAttribute("aria-label", "Photo de présentation");
+    }
   }
+}
+
+function normalizeFallbackAboutData(data) {
+  return {
+    textHtml: data.text_html ?? data.textHtml ?? data.text ?? "<p></p>",
+    imageUrl: data.image_url ?? data.imageUrl ?? data.image ?? "",
+    imageAlt: data.image_alt ?? data.imageAlt ?? "Photo de présentation"
+  };
+}
+
+function normalizeAboutData(data, baseUrl) {
+  let imageUrl = data.imageUrl ?? "";
+
+  if (imageUrl && !imageUrl.startsWith("http")) {
+    imageUrl = `${baseUrl}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
+  }
+
+  return {
+    textHtml: data.textHtml ?? "",
+    imageUrl,
+    imageAlt: data.imageAlt ?? "Photo de présentation"
+  };
+}
+
+function normalizeFallbackAboutData(data) {
+  return {
+    textHtml: data.textHtml ?? data.text ?? "",
+    imageUrl: "",
+    imageAlt: data.imageAlt ?? "Photo de présentation"
+  };
+}
+
+function renderAbout(photoContainer, textEl, data, fallbackImage) {
+  // ✅ texte
+  textEl.innerHTML = data.textHtml || "<p></p>";
+
+  // ✅ image avec fallback
+  let finalImage = data.imageUrl || fallbackImage;
+
+  photoContainer.style.backgroundImage = `url("${finalImage}")`;
+  photoContainer.setAttribute("role", "img");
+  photoContainer.setAttribute("aria-label", data.imageAlt || "Photo de présentation");
 }
 
 document.addEventListener("DOMContentLoaded", () => {
