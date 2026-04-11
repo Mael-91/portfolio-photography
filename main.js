@@ -517,22 +517,71 @@ async function loadFooter() {
 
 async function loadAbout() {
   const textEl = document.getElementById("aboutText");
-  if (!textEl) return;
+  const imageEl = document.getElementById("aboutImage");
+
+  if (!textEl || !imageEl) return;
+
+  const API_URL = "https://api.maelconstantin.fr/about";
+  const FALLBACK_JSON_URL = "./data/about.json";
+  const IMAGE_BASE_URL = "https://admin-api.maelconstantin.fr";
 
   try {
-    const res = await fetch("./data/about.json", { cache: "no-store" });
+    const res = await fetch(API_URL, { cache: "no-store" });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
     const data = await res.json();
 
-    const paragraphs = Array.isArray(data.paragraphs) ? data.paragraphs : [];
+    const normalized = normalizeAboutData(data, IMAGE_BASE_URL);
 
-    textEl.innerHTML = paragraphs
-      .map(p => `<p>${escapeHtml(p)}</p>`)
-      .join("");
+    textEl.innerHTML = normalized.textHtml;
+    imageEl.src = normalized.imageUrl;
+    imageEl.alt = normalized.imageAlt;
 
-  } catch (err) {
-    console.error("Erreur chargement about.json :", err);
+  } catch (apiError) {
+    console.warn("API about indisponible, fallback sur about.json :", apiError);
+
+    try {
+      const fallbackRes = await fetch(FALLBACK_JSON_URL, { cache: "no-store" });
+      if (!fallbackRes.ok) throw new Error(`HTTP ${fallbackRes.status}`);
+
+      const fallbackData = await fallbackRes.json();
+      const normalized = normalizeFallbackAboutData(fallbackData);
+
+      textEl.innerHTML = normalized.textHtml;
+      imageEl.src = normalized.imageUrl;
+      imageEl.alt = normalized.imageAlt;
+
+    } catch (fallbackError) {
+      console.error("Impossible de charger la section about :", fallbackError);
+      textEl.innerHTML = `<p>Impossible de charger la présentation pour le moment.</p>`;
+    }
   }
+}
+
+function normalizeAboutData(data, imageBaseUrl) {
+  let imageUrl =
+    data.image_url ??
+    data.imageUrl ??
+    data.image ??
+    "";
+
+  if (imageUrl && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+    imageUrl = `${imageBaseUrl}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
+  }
+
+  return {
+    textHtml: data.text_html ?? data.textHtml ?? "<p></p>",
+    imageUrl,
+    imageAlt: data.image_alt ?? data.imageAlt ?? "Photo de présentation"
+  };
+}
+
+function normalizeFallbackAboutData(data) {
+  return {
+    textHtml: data.text_html ?? data.textHtml ?? data.text ?? "<p></p>",
+    imageUrl: data.image_url ?? data.imageUrl ?? data.image ?? "",
+    imageAlt: data.image_alt ?? data.imageAlt ?? "Photo de présentation"
+  };
 }
 
 document.addEventListener("DOMContentLoaded", () => {
