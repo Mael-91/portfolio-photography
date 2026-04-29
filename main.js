@@ -4,16 +4,25 @@ const PORTFOLIO_SETTINGS_FALLBACK_URL = "./data/portfolio-settings.json";
 
 async function fetchWithSingleFallback(apiPath, fallbackKey) {
   try {
-    const res = await fetch(`${API_BASE_URL}${apiPath}`, { cache: "no-store" });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const res = await fetch(`${API_BASE_URL}${apiPath}`, {
+      cache: "no-store"
+    });
 
-    const data = await res.json();
+    if (!res.ok) throw new Error(`API HTTP ${res.status}`);
 
-    if (!data || (Array.isArray(data) && data.length === 0)) {
+    const rawData = await res.json();
+    const data = Array.isArray(rawData) ? rawData[0] : rawData;
+
+    if (
+      data === null ||
+      data === undefined ||
+      (Array.isArray(rawData) && rawData.length === 0) ||
+      (typeof data === "object" && Object.keys(data).length === 0)
+    ) {
       throw new Error("Réponse API vide");
     }
 
-    return Array.isArray(data) ? data[0] : data;
+    return data;
   } catch (error) {
     console.warn(`Fallback JSON utilisé pour ${apiPath}`, error);
 
@@ -21,7 +30,9 @@ async function fetchWithSingleFallback(apiPath, fallbackKey) {
       cache: "no-store"
     });
 
-    if (!fallbackRes.ok) throw new Error(`Fallback HTTP ${fallbackRes.status}`);
+    if (!fallbackRes.ok) {
+      throw new Error(`Fallback HTTP ${fallbackRes.status}`);
+    }
 
     const fallbackData = await fallbackRes.json();
     return fallbackData[fallbackKey];
@@ -173,6 +184,12 @@ async function loadContactPage() {
   };
 
   window.CONTACT_OPTIONS = options;
+
+  window.dispatchEvent(
+    new CustomEvent("contact-options-ready", {
+      detail: options
+    })
+  );
 
   if (selectEl) {
     Array.from(selectEl.options).forEach((option) => {
