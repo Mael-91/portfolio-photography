@@ -56,29 +56,27 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function showForm(type) {
-
       const options = window.CONTACT_OPTIONS || {
         pro: true,
         part: true,
         info: true
       };
 
-      if (formPro) {
-        const visible = type === "pro" && options.pro !== false;
-        formPro.classList.toggle("is-hidden", !visible);
-        formPro.hidden = !visible;
+      resetFormsVisibility();
+
+      if (type === "pro" && options.pro && formPro) {
+        formPro.classList.remove("is-hidden");
+        formPro.hidden = false;
       }
 
-      if (formPart) {
-        const visible = type === "part" && options.part !== false;
-        formPart.classList.toggle("is-hidden", !visible);
-        formPart.hidden = !visible;
+      if (type === "part" && options.part && formPart) {
+        formPart.classList.remove("is-hidden");
+        formPart.hidden = false;
       }
 
-      if (formInfo) {
-        const visible = type === "info" && options.info !== false;
-        formInfo.classList.toggle("is-hidden", !visible);
-        formInfo.hidden = !visible;
+      if (type === "info" && options.info && formInfo) {
+        formInfo.classList.remove("is-hidden");
+        formInfo.hidden = false;
       }
     }
 
@@ -361,3 +359,30 @@ function clearFieldErrors(form) {
     el.textContent = "";
   });
 }
+
+function resetFormsVisibility() {
+  [formPro, formPart, formInfo].forEach((form) => {
+    if (!form) return;
+
+    form.classList.add("is-hidden");
+    form.hidden = true;
+  });
+}
+
+window.addEventListener("contact-options-ready", (e) => {
+  const options = e.detail;
+
+  // 1. reset complet
+  resetFormsVisibility();
+
+  // 2. récupérer le select
+  const contactType = document.getElementById("contactType");
+
+  // 3. trouver premier form actif
+  const firstEnabled = Object.keys(options).find((key) => options[key]);
+
+  if (firstEnabled && contactType) {
+    contactType.value = firstEnabled;
+    showForm(firstEnabled);
+  }
+});
