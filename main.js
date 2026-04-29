@@ -161,11 +161,17 @@ async function loadContactPage() {
   const selectEl = document.getElementById("contactType");
 
   if (titleEl) {
-    titleEl.textContent = data.contact_section_title ?? data.title ?? "";
+    titleEl.textContent =
+      data.title ??
+      data.contact_section_title ??
+      "";
   }
 
   if (subtitleEl) {
-    subtitleEl.textContent = data.contact_section_subtitle ?? data.subtitle ?? "";
+    subtitleEl.textContent =
+      data.subtitle ??
+      data.contact_section_subtitle ??
+      "";
   }
 
   const submitLabel =
@@ -178,9 +184,26 @@ async function loadContactPage() {
   });
 
   const options = {
-    pro: toBoolean(data.contact_option_pro_enabled ?? data.optionProEnabled, true),
-    part: toBoolean(data.contact_option_private_enabled ?? data.optionPrivateEnabled, true),
-    info: toBoolean(data.contact_option_info_enabled ?? data.optionInfoEnabled, true)
+    pro: toBoolean(
+      data.requestTypes?.proEnabled ??
+      data.contact_option_pro_enabled ??
+      data.optionProEnabled,
+      true
+    ),
+
+    part: toBoolean(
+      data.requestTypes?.privateEnabled ??
+      data.contact_option_private_enabled ??
+      data.optionPrivateEnabled,
+      true
+    ),
+
+    info: toBoolean(
+      data.requestTypes?.infoEnabled ??
+      data.contact_option_info_enabled ??
+      data.optionInfoEnabled,
+      true
+    )
   };
 
   window.CONTACT_OPTIONS = options;
