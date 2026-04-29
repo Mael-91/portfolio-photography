@@ -98,7 +98,7 @@ async function loadIdentity() {
 
 async function loadHero() {
   const data = await fetchWithSingleFallback(
-    "/portfolio/portfolio-hero-page",
+    "/portfolio/hero-page",
     "hero"
   );
 
