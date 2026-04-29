@@ -200,6 +200,7 @@ document.addEventListener("drop", (e) => {
 });
 
 async function loadServices() {
+  const servicesSection = document.getElementById("prestations");
   const titleEl = document.getElementById("servicesTitle");
   const introEl = document.getElementById("servicesIntro");
   const fromEl = document.getElementById("servicesFrom");
@@ -208,7 +209,7 @@ async function loadServices() {
   const tabPro = document.getElementById("servicesTabPro");
   const tabPart = document.getElementById("servicesTabPart");
 
-  if (!titleEl || !introEl || !fromEl || !gridEl || !ctaEl || !tabPro || !tabPart) return;
+  if (!servicesSection || !titleEl || !introEl || !fromEl || !gridEl || !ctaEl || !tabPro || !tabPart) return;
 
   const API_URL = "https://api.maelconstantin.fr/services";
   const FALLBACK_JSON_URL = "./data/services.json";
@@ -241,6 +242,7 @@ async function loadServices() {
     } catch (fallbackError) {
       console.error("Impossible de charger les services :", fallbackError);
 
+      servicesSection.hidden = false;
       titleEl.textContent = "PRESTATIONS";
       introEl.textContent = "";
       fromEl.innerHTML = "";
@@ -250,10 +252,15 @@ async function loadServices() {
     }
   }
 
-  // ✅ TITRE
+  if (servicesData.enabled === false) {
+    servicesSection.hidden = true;
+    return;
+  }
+
+  servicesSection.hidden = false;
+
   titleEl.textContent = servicesData.sectionTitle ?? "PRESTATIONS";
 
-  // ✅ INTRO FIXE (toujours visible au-dessus du toggle)
   introEl.textContent =
     servicesData.generalIntro ??
     "Chaque projet est unique. Les prestations sont définies selon vos besoins, le contexte et l’usage des images.";
@@ -264,14 +271,12 @@ async function loadServices() {
     const modeData = servicesData?.modes?.[type];
     if (!modeData) return;
 
-    // ✅ Toggle (inchangé)
     tabPro.classList.toggle("is-active", type === "pro");
     tabPart.classList.toggle("is-active", type === "private");
 
     tabPro.setAttribute("aria-selected", String(type === "pro"));
     tabPart.setAttribute("aria-selected", String(type === "private"));
 
-    // ✅ TEXTE DYNAMIQUE SOUS LE TOGGLE
     if (modeData.introEnabled) {
       if (modeData.introHtml) {
         fromEl.innerHTML = modeData.introHtml;
@@ -295,7 +300,6 @@ async function loadServices() {
       fromEl.hidden = true;
     }
 
-    // ✅ CARTES
     const cards = Array.isArray(modeData.cards) ? modeData.cards : [];
 
     gridEl.innerHTML = cards
@@ -330,7 +334,6 @@ async function loadServices() {
       })
       .join("");
 
-    // ✅ CTA
     const cta = modeData.cta ?? servicesData.cta ?? {};
     const primaryText = cta.primaryText ?? "Demander un devis";
     const primaryHref = cta.primaryHref ?? "#contact";
@@ -342,16 +345,15 @@ async function loadServices() {
     `;
   }
 
-  // ✅ Toggle listeners (inchangé)
   tabPro.addEventListener("click", () => renderServices("pro"));
   tabPart.addEventListener("click", () => renderServices("private"));
 
-  // ✅ Initial render
   renderServices(currentType);
 }
 
 function normalizeServicesApiData(apiData, fallbackData) {
   return {
+    enabled: apiData?.enabled === true,
     sectionTitle: fallbackData?.sectionTitle ?? "PRESTATIONS",
     generalIntro:
       fallbackData?.intro ??
@@ -420,6 +422,7 @@ function normalizeFallbackServicesData(fallbackData) {
     : [];
 
   return {
+    enabled: true,
     sectionTitle: fallbackData?.sectionTitle ?? "PRESTATIONS",
     generalIntro:
       fallbackData?.intro ??
