@@ -67,12 +67,13 @@ async function fetchWithFallback(apiPath, fallbackPath) {
 
 async function loadIdentity() {
   const data = await fetchWithSingleFallback("/portfolio/identity", "identity");
-
-  const title = data.site_title ?? data.siteTitle ?? "";
-  const description = data.site_description ?? data.siteDescription ?? "";
+  const title = (data.site_title ?? data.siteTitle ?? "").trim();
+  const description = (data.site_description ?? data.siteDescription ?? "").trim();
   const favicon = resolveImageUrl(data.site_favicon_url ?? data.faviconUrl ?? "");
 
-  if (title) document.title = title;
+  if (title) {
+    document.title = title;
+  }
 
   if (description) {
     let meta = document.querySelector('meta[name="description"]');
@@ -82,16 +83,16 @@ async function loadIdentity() {
       meta.name = "description";
       document.head.appendChild(meta);
     }
-
     meta.content = description;
   }
 
-  if (favicon) {
-    document
-      .querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]')
-      .forEach((link) => {
-        link.href = favicon;
-      });
+  // ✅ Open Graph
+  setMetaProperty("og:site_name", title);
+  setMetaProperty("og:title", title);
+  setMetaProperty("og:description", description);
+
+  if (favicon && typeof favicon === "string") {
+    updateFavicon(favicon);
   }
 }
 
@@ -108,12 +109,15 @@ async function loadHero() {
   if (titleEl) titleEl.textContent = data.home_title ?? data.title ?? "";
   if (subtitleEl) subtitleEl.textContent = data.home_subtitle ?? data.subtitle ?? "";
 
-  const imageUrl = resolveImageUrl(
-    data.home_background_image_url ?? data.backgroundImageUrl ?? ""
-  );
+  const imageUrl = resolveImageUrl(data.home_background_image_url ?? data.backgroundImageUrl ?? "") + `?v=${Date.now()}`;
 
   if (heroEl && imageUrl) {
-    heroEl.style.backgroundImage = `url("${imageUrl}")`;
+    applyDynamicBackgroundClass(
+      heroEl,
+      "hero--dynamic-bg",
+      imageUrl
+    );
+
   }
 }
 
@@ -216,6 +220,56 @@ function toggleContactForms(options) {
       form.remove();
     }
   });
+}
+
+function updateFavicon(url) {
+  const faviconEl = document.getElementById("site-favicon");
+  if (faviconEl && url) {
+    faviconEl.href = url;
+  }
+}
+
+function setMetaProperty(property, content) {
+  if (!content) return;
+
+  let meta = document.querySelector(`meta[property="${property}"]`);
+
+  if (!meta) {
+    meta = document.createElement("meta");
+    meta.setAttribute("property", property);
+    document.head.appendChild(meta);
+  }
+
+  meta.setAttribute("content", content);
+}
+
+function applyDynamicBackgroundClass(element, className, imageUrl) {
+  if (!element || !className || !imageUrl) return;
+
+  // Supprime ancienne classe dynamique si existante
+  const existing = Array.from(document.styleSheets)
+    .flatMap(sheet => {
+      try {
+        return Array.from(sheet.cssRules || []);
+      } catch {
+        return [];
+      }
+    })
+    .find(rule => rule.selectorText === `.${className}`);
+
+  if (existing) return;
+
+  const style = document.createElement("style");
+
+  style.innerHTML = `
+    .${className} {
+      background-image: url("${imageUrl}");
+    }
+  `;
+
+  document.head.appendChild(style);
+
+  element.classList.add(className);
 }
 
 async function loadAutomotiveGrid() {
