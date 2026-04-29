@@ -35,11 +35,23 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function showForm(type) {
-    if (!formPro || !formPart || !formInfo) return;
+    const options = window.CONTACT_OPTIONS || {
+      pro: true,
+      part: true,
+      info: true
+    };
 
-    formPro.classList.toggle("is-hidden", type !== "pro");
-    formPart.classList.toggle("is-hidden", type !== "part");
-    formInfo.classList.toggle("is-hidden", type !== "info");
+    if (formPro) {
+      formPro.classList.toggle("is-hidden", type !== "pro" || options.pro === false);
+    }
+
+    if (formPart) {
+      formPart.classList.toggle("is-hidden", type !== "part" || options.part === false);
+    }
+
+    if (formInfo) {
+      formInfo.classList.toggle("is-hidden", type !== "info" || options.info === false);
+    }
   }
 
   if (contactType) {

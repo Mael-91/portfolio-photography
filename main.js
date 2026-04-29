@@ -1,3 +1,223 @@
+const API_BASE_URL = "https://api.maelconstantin.fr";
+const ASSET_BASE_URL = "https://admin-api.maelconstantin.fr";
+const PORTFOLIO_SETTINGS_FALLBACK_URL = "./data/portfolio-settings.json";
+
+async function fetchWithSingleFallback(apiPath, fallbackKey) {
+  try {
+    const res = await fetch(`${API_BASE_URL}${apiPath}`, { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+
+    if (!data || (Array.isArray(data) && data.length === 0)) {
+      throw new Error("Réponse API vide");
+    }
+
+    return Array.isArray(data) ? data[0] : data;
+  } catch (error) {
+    console.warn(`Fallback JSON utilisé pour ${apiPath}`, error);
+
+    const fallbackRes = await fetch(PORTFOLIO_SETTINGS_FALLBACK_URL, {
+      cache: "no-store"
+    });
+
+    if (!fallbackRes.ok) throw new Error(`Fallback HTTP ${fallbackRes.status}`);
+
+    const fallbackData = await fallbackRes.json();
+    return fallbackData[fallbackKey];
+  }
+}
+
+function resolveImageUrl(url) {
+  if (!url) return "";
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+
+  return `${ASSET_BASE_URL}${url.startsWith("/") ? "" : "/"}${url}`;
+}
+
+async function fetchWithFallback(apiPath, fallbackPath) {
+  try {
+    const res = await fetch(`${API_BASE_URL}${apiPath}`, {
+      cache: "no-store"
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+
+    if (!data || (Array.isArray(data) && data.length === 0)) {
+      throw new Error("Données vides");
+    }
+
+    return Array.isArray(data) ? data[0] : data;
+  } catch (err) {
+    console.warn(`Fallback utilisé pour ${apiPath}`, err);
+
+    const fallbackRes = await fetch(fallbackPath, {
+      cache: "no-store"
+    });
+
+    if (!fallbackRes.ok) {
+      throw new Error(`Fallback HTTP ${fallbackRes.status}`);
+    }
+
+    return fallbackRes.json();
+  }
+}
+
+async function loadIdentity() {
+  const data = await fetchWithSingleFallback("/portfolio/identity", "identity");
+
+  const title = data.site_title ?? data.siteTitle ?? "";
+  const description = data.site_description ?? data.siteDescription ?? "";
+  const favicon = resolveImageUrl(data.site_favicon_url ?? data.faviconUrl ?? "");
+
+  if (title) document.title = title;
+
+  if (description) {
+    let meta = document.querySelector('meta[name="description"]');
+
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.name = "description";
+      document.head.appendChild(meta);
+    }
+
+    meta.content = description;
+  }
+
+  if (favicon) {
+    document
+      .querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]')
+      .forEach((link) => {
+        link.href = favicon;
+      });
+  }
+}
+
+async function loadHero() {
+  const data = await fetchWithSingleFallback(
+    "/portfolio/portfolio-hero-page",
+    "hero"
+  );
+
+  const titleEl = document.querySelector(".hero__title");
+  const subtitleEl = document.querySelector(".hero__subtitle");
+  const heroEl = document.querySelector(".hero");
+
+  if (titleEl) titleEl.textContent = data.home_title ?? data.title ?? "";
+  if (subtitleEl) subtitleEl.textContent = data.home_subtitle ?? data.subtitle ?? "";
+
+  const imageUrl = resolveImageUrl(
+    data.home_background_image_url ?? data.backgroundImageUrl ?? ""
+  );
+
+  if (heroEl && imageUrl) {
+    heroEl.style.backgroundImage = `url("${imageUrl}")`;
+  }
+}
+
+async function loadPortfolioSection() {
+  const data = await fetchWithSingleFallback(
+    "/portfolio/portfolio-page",
+    "portfolio"
+  );
+
+  const titleEl = document.querySelector(".auto__title");
+  const subtitleEl = document.querySelector(".auto__subtitle");
+
+  if (titleEl) {
+    titleEl.textContent = data.gallery_section_title ?? data.title ?? "";
+  }
+
+  if (subtitleEl) {
+    subtitleEl.textContent = data.gallery_section_subtitle ?? data.subtitle ?? "";
+  }
+}
+
+async function loadContactPage() {
+  const data = await fetchWithSingleFallback(
+    "/portfolio/contact-page",
+    "contact"
+  );
+
+  const titleEl = document.querySelector(".contact__title");
+  const subtitleEl = document.querySelector(".contact__intro");
+  const selectEl = document.getElementById("contactType");
+
+  if (titleEl) {
+    titleEl.textContent = data.contact_section_title ?? data.title ?? "";
+  }
+
+  if (subtitleEl) {
+    subtitleEl.textContent = data.contact_section_subtitle ?? data.subtitle ?? "";
+  }
+
+  const submitLabel =
+    data.contact_submit_button_label ??
+    data.submitButtonLabel ??
+    "Envoyer";
+
+  document.querySelectorAll(".contact__form button[type='submit']").forEach((btn) => {
+    btn.textContent = submitLabel;
+  });
+
+  const options = {
+    pro: data.contact_option_pro_enabled ?? data.optionProEnabled ?? true,
+    part: data.contact_option_private_enabled ?? data.optionPrivateEnabled ?? true,
+    info: data.contact_option_info_enabled ?? data.optionInfoEnabled ?? true
+  };
+
+  window.CONTACT_OPTIONS = options;
+
+  if (selectEl) {
+    Array.from(selectEl.options).forEach((option) => {
+      if (options[option.value] === false) {
+        option.remove();
+      }
+    });
+
+    const firstEnabled = Object.keys(options).find((key) => options[key]);
+
+    if (firstEnabled && options[selectEl.value] === false) {
+      selectEl.value = firstEnabled;
+      selectEl.dispatchEvent(new Event("change"));
+    }
+  }
+
+  removeDisabledContactForms(options);
+}
+
+function removeDisabledContactForms(options) {
+  const forms = {
+    pro: document.getElementById("formPro"),
+    part: document.getElementById("formPart"),
+    info: document.getElementById("formInfo")
+  };
+
+  Object.entries(forms).forEach(([type, form]) => {
+    if (form && options[type] === false) {
+      form.remove();
+    }
+  });
+}
+
+function toggleContactForms(options) {
+  const forms = {
+    pro: document.getElementById("formPro"),
+    part: document.getElementById("formPart"),
+    info: document.getElementById("formInfo")
+  };
+
+  Object.entries(forms).forEach(([key, form]) => {
+    if (!form) return;
+
+    if (!options[key]) {
+      form.remove();
+    }
+  });
+}
+
 async function loadAutomotiveGrid() {
   const grid = document.getElementById("autoGrid");
   if (!grid) return;
@@ -616,6 +836,10 @@ function renderAbout(photoContainer, textEl, data, fallbackImage) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  loadIdentity();
+  loadHero();
+  loadPortfolioSection();
+  loadContactPage();
   loadFooter();
   loadAutomotiveGrid();
   loadServices();

@@ -1,0 +1,24 @@
+{
+  "identity": {
+    "siteTitle": "Mael Constantin | Photographe automobile freelance",
+    "siteDescription": "Photographe automobile freelance spécialisé dans l’univers automobile, les événements, les circuits, les concessions et les projets passionnés.",
+    "faviconUrl": "/assets/favicon.ico"
+  },
+  "hero": {
+    "title": "MAEL CONSTANTIN",
+    "subtitle": "Une passion née sur la route, façonnée par le voyage et nourrie par l’univers automobile",
+    "backgroundImageUrl": "/assets/hero.jpg"
+  },
+  "portfolio": {
+    "title": "UNIVERS AUTOMOBILE",
+    "subtitle": "Événements · Circuit · Héritage · Concessions"
+  },
+  "contact": {
+    "title": "CONTACT / DEVIS",
+    "subtitle": "Décrivez votre projet, je vous répondrai rapidement avec une proposition personnalisée.",
+    "submitButtonLabel": "Envoyer",
+    "optionProEnabled": true,
+    "optionPrivateEnabled": true,
+    "optionInfoEnabled": true
+  }
+}
