@@ -1,188 +1,217 @@
 const API_ENDPOINT = "https://api.maelconstantin.fr/contact";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const contactType = document.getElementById("contactType");
-  const formPro = document.getElementById("formPro");
-  const formPart = document.getElementById("formPart");
-  const formInfo = document.getElementById("formInfo");
-
-  const forms = [formPro, formPart, formInfo].filter(Boolean);
-
-  document.querySelectorAll('input[name="consent_privacy"]').forEach((input) => {
-    input.addEventListener("change", () => {
-      if (input.checked) {
-        const form = input.closest("form");
-        const errorEl = form?.querySelector(`[data-error-for="${input.id}"]`);
-        if (errorEl) {
-          errorEl.textContent = "";
-        }
-        clearMessage(form);
-      }
-    });
-  });
-
-  document.querySelectorAll('input[name="allow_phone_contact"]').forEach((input) => {
-    input.addEventListener("change", () => {
-      if (input.checked) {
-        const form = input.closest("form");
-        const errorEl = form?.querySelector(`[data-error-for="${input.id}"]`);
-        if (errorEl) {
-          errorEl.textContent = "";
-        }
-        clearMessage(form);
-      }
-    });
-  });
-
-  function showForm(type) {
+  setTimeout(() => {
+    const contactType = document.getElementById("contactType");
     const options = window.CONTACT_OPTIONS || {
       pro: true,
       part: true,
       info: true
     };
 
-    if (formPro) {
-      formPro.classList.toggle("is-hidden", type !== "pro" || options.pro === false);
+    if (contactType) {
+      Array.from(contactType.options).forEach((option) => {
+        if (options[option.value] === false) {
+          option.remove();
+        }
+      });
+
+      const firstEnabled = Object.keys(options).find((key) => options[key]);
+
+      if (firstEnabled && options[contactType.value] === false) {
+        contactType.value = firstEnabled;
+      }
     }
 
-    if (formPart) {
-      formPart.classList.toggle("is-hidden", type !== "part" || options.part === false);
-    }
+    const formPro = document.getElementById("formPro");
+    const formPart = document.getElementById("formPart");
+    const formInfo = document.getElementById("formInfo");
 
-    if (formInfo) {
-      formInfo.classList.toggle("is-hidden", type !== "info" || options.info === false);
-    }
-  }
+    const forms = [formPro, formPart, formInfo].filter(Boolean);
 
-  if (contactType) {
-    showForm(contactType.value);
-
-    contactType.addEventListener("change", (e) => {
-      showForm(e.target.value);
+    document.querySelectorAll('input[name="consent_privacy"]').forEach((input) => {
+      input.addEventListener("change", () => {
+        if (input.checked) {
+          const form = input.closest("form");
+          const errorEl = form?.querySelector(`[data-error-for="${input.id}"]`);
+          if (errorEl) {
+            errorEl.textContent = "";
+          }
+          clearMessage(form);
+        }
+      });
     });
-  }
 
-  forms.forEach((form) => {
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+    document.querySelectorAll('input[name="allow_phone_contact"]').forEach((input) => {
+      input.addEventListener("change", () => {
+        if (input.checked) {
+          const form = input.closest("form");
+          const errorEl = form?.querySelector(`[data-error-for="${input.id}"]`);
+          if (errorEl) {
+            errorEl.textContent = "";
+          }
+          clearMessage(form);
+        }
+      });
+    });
 
-      clearMessage(form);
-      clearFieldErrors(form);
+    function showForm(type) {
 
-      const submitBtn = form.querySelector("button[type='submit']");
-      const originalText = submitBtn ? submitBtn.textContent : "";
+      const options = window.CONTACT_OPTIONS || {
+        pro: true,
+        part: true,
+        info: true
+      };
 
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Envoi...";
+      if (formPro) {
+        const visible = type === "pro" && options.pro !== false;
+        formPro.classList.toggle("is-hidden", !visible);
+        formPro.hidden = !visible;
       }
 
-      try {
-        const formData = new FormData(form);
-        const requestType = formData.get("request_type");
+      if (formPart) {
+        const visible = type === "part" && options.part !== false;
+        formPart.classList.toggle("is-hidden", !visible);
+        formPart.hidden = !visible;
+      }
 
-        const isValid = validateForm(form, requestType, formData);
+      if (formInfo) {
+        const visible = type === "info" && options.info !== false;
+        formInfo.classList.toggle("is-hidden", !visible);
+        formInfo.hidden = !visible;
+      }
+    }
 
-        if (!isValid) {
+    if (contactType) {
+      showForm(contactType.value);
+
+      contactType.addEventListener("change", (e) => {
+        showForm(e.target.value);
+      });
+    }
+
+    forms.forEach((form) => {
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        clearMessage(form);
+        clearFieldErrors(form);
+
+        const submitBtn = form.querySelector("button[type='submit']");
+        const originalText = submitBtn ? submitBtn.textContent : "";
+
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Envoi...";
+        }
+
+        try {
+          const formData = new FormData(form);
+          const requestType = formData.get("request_type");
+
+          const isValid = validateForm(form, requestType, formData);
+
+          if (!isValid) {
+            showMessage(
+              form,
+              "Veuillez corriger les champs du formulaire avant l’envoi.",
+              "error"
+            );
+            return;
+          }
+
+          if (formData.get("bot-field")) {
+            throw new Error("Envoi invalide.");
+          }
+
+          let data = null;
+
+          if (requestType === "pro") {
+            data = {
+              request_type: "pro",
+              first_name: toNullableString(formData.get("first_name")),
+              last_name: toNullableString(formData.get("last_name")),
+              company: toNullableString(formData.get("company")),
+              email: toRequiredString(formData.get("email")),
+              phone: toNullableString(formData.get("phone")),
+              message: toRequiredString(formData.get("message")),
+              allow_phone_contact: formData.get("allow_phone_contact") === "on",
+              consent_privacy: formData.get("consent_privacy") === "on"
+            };
+          } else if (requestType === "part") {
+            data = {
+              request_type: "part",
+              first_name: toRequiredString(formData.get("first_name")),
+              last_name: toRequiredString(formData.get("last_name")),
+              email: toRequiredString(formData.get("email")),
+              phone: toNullableString(formData.get("phone")),
+              message: toRequiredString(formData.get("message")),
+              allow_phone_contact: formData.get("allow_phone_contact") === "on",
+              consent_privacy: formData.get("consent_privacy") === "on"
+            };
+          } else if (requestType === "info") {
+            data = {
+              request_type: "info",
+              first_name: toRequiredString(formData.get("first_name")),
+              last_name: toRequiredString(formData.get("last_name")),
+              email: toRequiredString(formData.get("email")),
+              message: toRequiredString(formData.get("message")),
+              consent_privacy: formData.get("consent_privacy") === "on"
+            };
+          } else {
+            throw new Error("Type de formulaire invalide.");
+          }
+
+          const response = await fetch(API_ENDPOINT, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+          });
+
+          let result = null;
+          try {
+            result = await response.json();
+          } catch {
+            throw new Error("Réponse serveur invalide.");
+          }
+
+          if (!response.ok) {
+            const apiMessage =
+              result?.message ||
+              result?.error ||
+              extractZodErrors(result?.errors) ||
+              "Une erreur est survenue lors de l'envoi du formulaire.";
+
+            showMessage(form, apiMessage, "error");
+            return;
+          }
+
           showMessage(
             form,
-            "Veuillez corriger les champs du formulaire avant l’envoi.",
+            "Votre message a bien été envoyé. Je vous répondrai rapidement.",
+            "success"
+          );
+
+          form.reset();
+        } catch (error) {
+          console.error("Erreur formulaire :", error);
+
+          showMessage(
+            form,
+            error?.message || "Impossible d'envoyer le formulaire. Réessayez plus tard.",
             "error"
           );
-          return;
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+          }
         }
-
-        if (formData.get("bot-field")) {
-          throw new Error("Envoi invalide.");
-        }
-
-        let data = null;
-
-        if (requestType === "pro") {
-          data = {
-            request_type: "pro",
-            first_name: toNullableString(formData.get("first_name")),
-            last_name: toNullableString(formData.get("last_name")),
-            company: toNullableString(formData.get("company")),
-            email: toRequiredString(formData.get("email")),
-            phone: toNullableString(formData.get("phone")),
-            message: toRequiredString(formData.get("message")),
-            allow_phone_contact: formData.get("allow_phone_contact") === "on",
-            consent_privacy: formData.get("consent_privacy") === "on"
-          };
-        } else if (requestType === "part") {
-          data = {
-            request_type: "part",
-            first_name: toRequiredString(formData.get("first_name")),
-            last_name: toRequiredString(formData.get("last_name")),
-            email: toRequiredString(formData.get("email")),
-            phone: toNullableString(formData.get("phone")),
-            message: toRequiredString(formData.get("message")),
-            allow_phone_contact: formData.get("allow_phone_contact") === "on",
-            consent_privacy: formData.get("consent_privacy") === "on"
-          };
-        } else if (requestType === "info") {
-          data = {
-            request_type: "info",
-            first_name: toRequiredString(formData.get("first_name")),
-            last_name: toRequiredString(formData.get("last_name")),
-            email: toRequiredString(formData.get("email")),
-            message: toRequiredString(formData.get("message")),
-            consent_privacy: formData.get("consent_privacy") === "on"
-          };
-        } else {
-          throw new Error("Type de formulaire invalide.");
-        }
-
-        const response = await fetch(API_ENDPOINT, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data)
-        });
-
-        let result = null;
-        try {
-          result = await response.json();
-        } catch {
-          throw new Error("Réponse serveur invalide.");
-        }
-
-        if (!response.ok) {
-          const apiMessage =
-            result?.message ||
-            result?.error ||
-            extractZodErrors(result?.errors) ||
-            "Une erreur est survenue lors de l'envoi du formulaire.";
-
-          showMessage(form, apiMessage, "error");
-          return;
-        }
-
-        showMessage(
-          form,
-          "Votre message a bien été envoyé. Je vous répondrai rapidement.",
-          "success"
-        );
-
-        form.reset();
-      } catch (error) {
-        console.error("Erreur formulaire :", error);
-
-        showMessage(
-          form,
-          error?.message || "Impossible d'envoyer le formulaire. Réessayez plus tard.",
-          "error"
-        );
-      } finally {
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = originalText;
-        }
-      }
+      });
     });
-  });
+  }, 50);
 });
 
 function validateForm(form, requestType, formData) {

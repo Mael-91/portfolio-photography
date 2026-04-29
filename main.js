@@ -167,9 +167,9 @@ async function loadContactPage() {
   });
 
   const options = {
-    pro: data.contact_option_pro_enabled ?? data.optionProEnabled ?? true,
-    part: data.contact_option_private_enabled ?? data.optionPrivateEnabled ?? true,
-    info: data.contact_option_info_enabled ?? data.optionInfoEnabled ?? true
+    pro: toBoolean(data.contact_option_pro_enabled ?? data.optionProEnabled, true),
+    part: toBoolean(data.contact_option_private_enabled ?? data.optionPrivateEnabled, true),
+    info: toBoolean(data.contact_option_info_enabled ?? data.optionInfoEnabled, true)
   };
 
   window.CONTACT_OPTIONS = options;
@@ -270,6 +270,13 @@ function applyDynamicBackgroundClass(element, className, imageUrl) {
   document.head.appendChild(style);
 
   element.classList.add(className);
+}
+
+function toBoolean(value, defaultValue = true) {
+  if (value === true || value === 1 || value === "1") return true;
+  if (value === false || value === 0 || value === "0") return false;
+  if (value === null || value === undefined) return defaultValue;
+  return Boolean(value);
 }
 
 async function loadAutomotiveGrid() {
