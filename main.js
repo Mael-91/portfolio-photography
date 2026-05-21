@@ -139,7 +139,7 @@ async function loadPortfolioSection() {
   );
 
   const titleEl = document.querySelector(".auto__title");
-  const subtitleEl = document.querySelector(".auto__subtitle");
+  const subtitleEl = document.querySelector(".auto__lead");
 
   if (titleEl) {
     titleEl.textContent = data.gallery_section_title ?? data.title ?? "";
