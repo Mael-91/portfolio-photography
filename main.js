@@ -858,14 +858,13 @@ async function loadFooterContent(container) {
   try {
     const data = await fetchWithSingleFallback("/footer", "footer");
 
-    const footerText = data.footerText ?? data.footer_text ?? "";
-    const footerBottomText = data.footerBottomText ?? data.footer_bottom_text ?? "";
-    const footerInstagramUrl = data.footerInstagramUrl ?? data.footer_instagram_url ?? "";
-
+    const footerData = data.footer ?? data;
+    const footerText = footerData.footerText ?? footerData.footer_text ?? "";
+    const footerBottomText = footerData.footerBottomText ?? footerData.footer_bottom_text ?? "";
+    const footerInstagramUrl = footerData.footerInstagramUrl ?? footerData.footer_instagram_url ?? "";
+    
     const footerTextEl = container.querySelector("#footerText");
-
     const footerBottomTextEl = container.querySelector("#footerBottomText");
-
     const footerInstagramEl = container.querySelector("#footerInstagram");
 
     if (footerTextEl && footerText) {
