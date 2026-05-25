@@ -78,7 +78,7 @@ async function fetchWithFallback(apiPath, fallbackPath) {
 
 async function loadIdentity() {
   const data = await fetchWithSingleFallback("/portfolio/identity", "identity");
-  const title = (data.site_title ?? data.siteTitle ?? "").trim();
+  const title = (data.siteName ?? data.site_title ?? data.siteTitle ?? "").trim();
   const description = (data.site_description ?? data.siteDescription ?? "").trim();
   const favicon = resolveImageUrl(data.site_favicon_url ?? data.faviconUrl ?? "");
 
