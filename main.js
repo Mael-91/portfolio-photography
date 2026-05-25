@@ -862,10 +862,18 @@ async function loadFooterContent(container) {
     const footerText = footerData.footerText ?? footerData.footer_text ?? "";
     const footerBottomText = footerData.footerBottomText ?? footerData.footer_bottom_text ?? "";
     const footerInstagramUrl = footerData.footerInstagramUrl ?? footerData.footer_instagram_url ?? "";
-    
+
     const footerTextEl = container.querySelector("#footerText");
     const footerBottomTextEl = container.querySelector("#footerBottomText");
     const footerInstagramEl = container.querySelector("#footerInstagram");
+
+    const secondaryBtn = document.getElementById("secondaryBtn");
+
+    if (secondaryBtn && footerInstagramUrl) {
+      secondaryBtn.href = footerInstagramUrl;
+      secondaryBtn.target = "_blank";
+      secondaryBtn.rel = "noopener noreferrer";
+    }
 
     if (footerTextEl && footerText) {
       footerTextEl.textContent = footerText;
