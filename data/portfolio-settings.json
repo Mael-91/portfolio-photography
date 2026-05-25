@@ -20,5 +20,10 @@
     "optionProEnabled": true,
     "optionPrivateEnabled": true,
     "optionInfoEnabled": true
+  },
+  "footer": {
+    "footerText": "Mael Constantin — Photographe automobile freelance",
+    "footerBottomText": "Photographe automobile en Essonne (91) — Interventions en Île-de-France et déplacement dans toute la France et Europe selon projet",
+    "footerInstagramUrl": "https://www.instagram.com/withmaelc/"
   }
 }

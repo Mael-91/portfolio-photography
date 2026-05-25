@@ -140,6 +140,8 @@ async function loadPortfolioSection() {
 
   const titleEl = document.querySelector(".auto__title");
   const subtitleEl = document.querySelector(".auto__lead");
+  const primaryBtn = document.getElementById("primaryBtn");
+  const secondaryBtn = document.getElementById("secondaryBtn");
 
   if (titleEl) {
     titleEl.textContent = data.gallery_section_title ?? data.title ?? "";
@@ -147,6 +149,20 @@ async function loadPortfolioSection() {
 
   if (subtitleEl) {
     subtitleEl.textContent = data.gallery_section_subtitle ?? data.subtitle ?? "";
+  }
+
+  if (primaryBtn) {
+    primaryBtn.textContent =
+      data.primaryButtonLabel ??
+      data.gallery_primary_button_label ??
+      primaryBtn.textContent;
+  }
+
+  if (secondaryBtn) {
+    secondaryBtn.textContent =
+      data.secondaryButtonLabel ??
+      data.gallery_secondary_button_label ??
+      secondaryBtn.textContent;
   }
 }
 
@@ -815,9 +831,7 @@ async function loadFooter() {
   const container = document.getElementById("site-footer");
   if (!container) return;
 
-  // Empêche double chargement
   if (footerLoaded || footerLoading) return;
-
   footerLoading = true;
 
   try {
@@ -827,15 +841,48 @@ async function loadFooter() {
     container.innerHTML = await res.text();
     container.removeAttribute("aria-hidden");
 
-    // Année dynamique
     const yearEl = container.querySelector("#year");
     if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+    await loadFooterContent(container);
 
     footerLoaded = true;
   } catch (err) {
     console.error("Erreur chargement footer:", err);
   } finally {
     footerLoading = false;
+  }
+}
+
+async function loadFooterContent(container) {
+  try {
+    const data = await fetchWithSingleFallback("/footer", "footer");
+
+    const footerText = data.footerText ?? data.footer_text ?? "";
+    const footerBottomText = data.footerBottomText ?? data.footer_bottom_text ?? "";
+    const footerInstagramUrl = data.footerInstagramUrl ?? data.footer_instagram_url ?? "";
+
+    const footerTextEl = container.querySelector("#footerText");
+
+    const footerBottomTextEl = container.querySelector("#footerBottomText");
+
+    const footerInstagramEl = container.querySelector("#footerInstagram");
+
+    if (footerTextEl && footerText) {
+      footerTextEl.textContent = footerText;
+    }
+
+    if (footerBottomTextEl && footerBottomText) {
+      footerBottomTextEl.textContent = footerBottomText;
+    }
+
+    if (footerInstagramEl && footerInstagramUrl) {
+      footerInstagramEl.href = footerInstagramUrl;
+      footerInstagramEl.target = "_blank";
+      footerInstagramEl.rel = "noopener noreferrer";
+    }
+  } catch (error) {
+    console.warn("Impossible de charger le contenu footer :", error);
   }
 }
 
@@ -892,10 +939,16 @@ async function loadAbout() {
 }
 
 function normalizeFallbackAboutData(data) {
+  const paragraphs = Array.isArray(data.paragraphs) ? data.paragraphs : [];
+
   return {
-    textHtml: data.text_html ?? data.textHtml ?? data.text ?? "<p></p>",
-    imageUrl: data.image_url ?? data.imageUrl ?? data.image ?? "",
-    imageAlt: data.image_alt ?? data.imageAlt ?? "Photo de présentation"
+    textHtml: paragraphs.length
+      ? paragraphs.map((p) => `<p>${escapeHtml(p)}</p>`).join("")
+      : "",
+    imageUrl: "",
+    imageAlt: data.imageAlt ?? "Photo de présentation",
+    instagramButtonLabel: data.instagramButtonLabel ?? "@withmaelc",
+    instagramButtonUrl: data.instagramButtonUrl ?? "https://www.instagram.com/withmaelc/"
   };
 }
 
@@ -909,7 +962,9 @@ function normalizeAboutData(data, baseUrl) {
   return {
     textHtml: data.textHtml ?? "",
     imageUrl,
-    imageAlt: data.imageAlt ?? "Photo de présentation"
+    imageAlt: data.imageAlt ?? "Photo de présentation",
+    instagramButtonLabel: data.instagramButtonLabel ?? "",
+    instagramButtonUrl: data.instagramButtonUrl ?? ""
   };
 }
 
@@ -925,15 +980,24 @@ function normalizeFallbackAboutData(data) {
 }
 
 function renderAbout(photoContainer, textEl, data, fallbackImage) {
-  // ✅ texte
   textEl.innerHTML = data.textHtml || "<p></p>";
 
-  // ✅ image avec fallback
-  let finalImage = data.imageUrl || fallbackImage;
+  const finalImage = data.imageUrl || fallbackImage;
 
   photoContainer.style.backgroundImage = `url("${finalImage}")`;
   photoContainer.setAttribute("role", "img");
   photoContainer.setAttribute("aria-label", data.imageAlt || "Photo de présentation");
+
+  const instagramLink = document.querySelector(".about__instagram");
+  const instagramName = document.querySelector(".about__instagram-name");
+
+  if (instagramLink && data.instagramButtonUrl) {
+    instagramLink.href = data.instagramButtonUrl;
+  }
+
+  if (instagramName && data.instagramButtonLabel) {
+    instagramName.textContent = data.instagramButtonLabel;
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
