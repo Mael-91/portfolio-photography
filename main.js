@@ -429,36 +429,11 @@ function normalizePortfolioItems(items) {
     .sort((a, b) => a.display_order - b.display_order);
 }
 
-let automotiveItems = [];
-let automotiveVisibleCount = 6;
-const AUTOMOTIVE_ITEMS_STEP = 6;
-
 function renderAutomotiveGrid(grid, items) {
-  const loadMoreLink = document.getElementById("autoLoadMore");
-  const showLessLink = document.getElementById("autoShowLess");
-
   automotiveItems = Array.isArray(items) ? items : [];
   automotiveVisibleCount = AUTOMOTIVE_ITEMS_STEP;
 
-  if (grid && loadMoreLink) {
-    loadMoreLink.addEventListener("click", (e) => {
-      e.preventDefault();
-      automotiveVisibleCount += AUTOMOTIVE_ITEMS_STEP;
-      renderVisibleAutomotiveItems(grid, loadMoreLink);
-    });
-  }
-
-  if (grid && showLessLink) {
-    showLessLink.addEventListener("click", (e) => {
-      e.preventDefault();
-      automotiveVisibleCount = AUTOMOTIVE_ITEMS_STEP;
-      renderVisibleAutomotiveItems(grid, loadMoreLink);
-      grid.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-      });
-    });
-  }
+  const loadMoreLink = document.getElementById("autoLoadMore");
 
   renderVisibleAutomotiveItems(grid, loadMoreLink);
 }
@@ -1052,6 +1027,10 @@ function renderAbout(photoContainer, textEl, data, fallbackImage) {
   }
 }
 
+let automotiveItems = [];
+let automotiveVisibleCount = 6;
+const AUTOMOTIVE_ITEMS_STEP = 6;
+
 document.addEventListener("DOMContentLoaded", () => {
   loadIdentity();
   loadHero();
@@ -1064,12 +1043,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const grid = document.getElementById("autoGrid");
   const loadMoreLink = document.getElementById("autoLoadMore");
+  const showLessLink = document.getElementById("autoShowLess");
 
-  if (grid && loadMoreLink) {
+  if (loadMoreLink) {
     loadMoreLink.addEventListener("click", (e) => {
       e.preventDefault();
-      automotiveVisibleCount += AUTOMOTIVE_ITEMS_STEP;
+      automotiveVisibleCount = Math.min(
+        automotiveVisibleCount + AUTOMOTIVE_ITEMS_STEP,
+        automotiveItems.length
+      );
       renderVisibleAutomotiveItems(grid, loadMoreLink);
+    });
+  }
+
+  if (showLessLink) {
+    showLessLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      automotiveVisibleCount = AUTOMOTIVE_ITEMS_STEP;
+      renderVisibleAutomotiveItems(grid, loadMoreLink);
+      grid.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
     });
   }
 });
