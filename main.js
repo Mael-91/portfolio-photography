@@ -434,10 +434,32 @@ let automotiveVisibleCount = 6;
 const AUTOMOTIVE_ITEMS_STEP = 6;
 
 function renderAutomotiveGrid(grid, items) {
+  const grid = document.getElementById("autoGrid");
   const loadMoreLink = document.getElementById("autoLoadMore");
+  const showLessLink = document.getElementById("autoShowLess");
 
   automotiveItems = Array.isArray(items) ? items : [];
   automotiveVisibleCount = AUTOMOTIVE_ITEMS_STEP;
+
+  if (grid && loadMoreLink) {
+    loadMoreLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      automotiveVisibleCount += AUTOMOTIVE_ITEMS_STEP;
+      renderVisibleAutomotiveItems(grid, loadMoreLink);
+    });
+  }
+
+  if (grid && showLessLink) {
+    showLessLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      automotiveVisibleCount = AUTOMOTIVE_ITEMS_STEP;
+      renderVisibleAutomotiveItems(grid, loadMoreLink);
+      grid.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+      });
+    });
+  }
 
   renderVisibleAutomotiveItems(grid, loadMoreLink);
 }
@@ -462,8 +484,14 @@ function renderVisibleAutomotiveItems(grid, loadMoreLink) {
     })
     .join("");
 
+  const showLessLink = document.getElementById("autoShowLess");
+
   if (loadMoreLink) {
     loadMoreLink.hidden = automotiveVisibleCount >= automotiveItems.length;
+  }
+
+  if (showLessLink) {
+    showLessLink.hidden = automotiveVisibleCount <= AUTOMOTIVE_ITEMS_STEP;
   }
 
   applyImageRatios();

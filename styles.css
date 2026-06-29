@@ -447,24 +447,24 @@ body {
 }
 
 .auto__more {
-  display: flex;
-  justify-content: center;
-  margin-top: 32px;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 2rem;
 }
 
 .auto__more-link {
-  color: var(--title-color);
-  text-decoration: none;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+    color: var(--title-color);
+    text-decoration: none;
+    font-weight: 600;
 }
 
 .auto__more-link:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 
 .auto__more-link[hidden] {
-  display: none;
+    display: none;
 }
 
 /* CTA */
