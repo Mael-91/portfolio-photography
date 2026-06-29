@@ -429,9 +429,23 @@ function normalizePortfolioItems(items) {
     .sort((a, b) => a.display_order - b.display_order);
 }
 
+let automotiveItems = [];
+let automotiveVisibleCount = 6;
+const AUTOMOTIVE_ITEMS_STEP = 6;
+
 function renderAutomotiveGrid(grid, items) {
-  grid.innerHTML = items
-    .slice(0, 6)
+  const loadMoreLink = document.getElementById("autoLoadMore");
+
+  automotiveItems = Array.isArray(items) ? items : [];
+  automotiveVisibleCount = AUTOMOTIVE_ITEMS_STEP;
+
+  renderVisibleAutomotiveItems(grid, loadMoreLink);
+}
+
+function renderVisibleAutomotiveItems(grid, loadMoreLink) {
+  const visibleItems = automotiveItems.slice(0, automotiveVisibleCount);
+
+  grid.innerHTML = visibleItems
     .map((item) => {
       return `
         <figure class="auto__card">
@@ -447,6 +461,10 @@ function renderAutomotiveGrid(grid, items) {
       `;
     })
     .join("");
+
+  if (loadMoreLink) {
+    loadMoreLink.hidden = automotiveVisibleCount >= automotiveItems.length;
+  }
 
   applyImageRatios();
 }
@@ -1016,4 +1034,15 @@ document.addEventListener("DOMContentLoaded", () => {
   loadAutomotiveGrid();
   loadServices();
   loadAbout();
+
+  const grid = document.getElementById("autoGrid");
+  const loadMoreLink = document.getElementById("autoLoadMore");
+
+  if (grid && loadMoreLink) {
+    loadMoreLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      automotiveVisibleCount += AUTOMOTIVE_ITEMS_STEP;
+      renderVisibleAutomotiveItems(grid, loadMoreLink);
+    });
+  }
 });
