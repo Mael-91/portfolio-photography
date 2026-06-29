@@ -434,7 +434,6 @@ let automotiveVisibleCount = 6;
 const AUTOMOTIVE_ITEMS_STEP = 6;
 
 function renderAutomotiveGrid(grid, items) {
-  const grid = document.getElementById("autoGrid");
   const loadMoreLink = document.getElementById("autoLoadMore");
   const showLessLink = document.getElementById("autoShowLess");
 
